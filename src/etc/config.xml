@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <divido_financing>
+                <active>1</active>
+                <model>Divido\DividoFinancing\Model\Payment</model>
+                <payment_action>authorize</payment_action>
+                <title>Pay in instalments with Divido</title>
+                <api_key/>
+                <min_order_total>0.50</min_order_total>
+            </divido_financing>
+        </payment>
+    </default>
+</config>
