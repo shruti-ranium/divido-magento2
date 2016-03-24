@@ -7,7 +7,7 @@
 namespace Divido\DividoFinancing\Model\Adminhtml\Source;
 
 /**
- * Class PaymentAction
+ * Class ProductSelection
  */
 class ProductSelection implements \Magento\Framework\Option\ArrayInterface
 {

@@ -10,7 +10,7 @@
         <section id="payment">
             <group id="divido_financing" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Divido Financing</label>
-
+                <comment><![CDATA[Divido description]]></comment>
                 <field id="api_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>API-key</label>
                 </field>
@@ -35,12 +35,21 @@
                 </field>
                 <field id="price_threshold" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Price threshold</label>
+                    <depends>
+                        <field id="product_selection">products_price_threshold</field>
+                    </depends>
                 </field>
-                <field id="plan_selection" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="plans_displayed" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Displayed plans</label>
+                    <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\PlansDisplayed</source_model>
+                </field>
+                <field id="plan_selection" translate="label" type="multiselect" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Plan selection</label>
                     <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\PlanSelection</source_model>
+                    <depends>
+                        <field id="plans_displayed">plans_selected</field>
+                    </depends>
                 </field>
-                
 
                 <field id="sort_order" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1"
                        showInStore="0">

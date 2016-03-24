@@ -9,7 +9,7 @@ namespace Divido\DividoFinancing\Model\Adminhtml\Source;
 /**
  * Class PaymentAction
  */
-class PlanSelection implements \Magento\Framework\Option\ArrayInterface
+class ProductPlanSelection extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
 {
     public function __construct (
         \Divido\DividoFinancing\Helper\Data $helper,
@@ -20,7 +20,7 @@ class PlanSelection implements \Magento\Framework\Option\ArrayInterface
         $this->logger = $logger;
     }
 
-    public function toOptionArray ()
+    public function getAllOptions ()
     {
         $plans = [];
         try {
