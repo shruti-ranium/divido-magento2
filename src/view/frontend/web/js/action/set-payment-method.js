@@ -6,15 +6,28 @@ define(
         'mage/storage',
         'Magento_Checkout/js/model/error-processor',
         'Magento_Customer/js/model/customer',
-        'Magento_Checkout/js/model/full-screen-loader'
+        'Magento_Checkout/js/model/full-screen-loader',
+        'Divido_DividoFinancing/js/model/credit-request'
     ],
-    function ($, quote, urlBuilder, storage, errorProcessor, customer, fullScreenLoader) {
+    function ($, quote, urlBuilder, storage, errorProcessor, customer, fullScreenLoader, creditRequest) {
         'use strict';
 
         return function (messageContainer) {
             var serviceUrl,
+                creditRequestUrl,
                 payload,
                 paymentData = quote.paymentMethod();
+
+            paymentData = {"method": paymentData.method};
+
+            creditRequest(quote)
+                .done(function () {
+                    console.log('done');
+                })
+                .fail(function () {
+                    console.log('fail');
+                });
+
 
             /**
              * Checkout for guest and registered customer.
@@ -34,6 +47,7 @@ define(
                     method: paymentData
                 };
             }
+
             fullScreenLoader.startLoader();
 
             return storage.put(
