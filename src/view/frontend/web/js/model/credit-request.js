@@ -5,7 +5,7 @@ define(
     ],
     function($, urlBuilder) {
         return function (quote) {
-            creditRequestUrl = '/rest/V1/divido/credit-request/' + quote.getQuoteId();
+            creditRequestUrl = '/rest/V1/divido/credit-request/';
 
             return $.ajax({
                 url: creditRequestUrl,

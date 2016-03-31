@@ -6,7 +6,8 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 {
     const METHOD_CODE = 'divido_financing';
 
-    protected $_code                    = self::METHOD_CODE;
+    protected $_code = self::METHOD_CODE;
+    protected $_isOffline = true;
 
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -36,5 +37,9 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
         $this->_scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->initializeData($data);
+    }
+
+    public function authorize (\Magento\Payment\Model\InfoInterface $payment, $amount)
+    {
     }
 }

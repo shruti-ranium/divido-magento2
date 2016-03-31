@@ -75,7 +75,9 @@
                         type="submit"
                         data-bind="
                         click: continueToDivido,
-                        attr: {title: $t('Continue to Divido')}
+                        attr: {title: $t('Continue to Divido')},
+                        enable: (getCode() == isChecked()),
+                        css: {disabled: !isPlaceOrderActionAllowed()}
                         ">
                     <span data-bind="i18n: 'Continue to Divido'"></span>
                 </button>

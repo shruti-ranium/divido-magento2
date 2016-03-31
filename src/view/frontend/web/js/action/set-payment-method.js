@@ -5,11 +5,9 @@ define(
         'Magento_Checkout/js/model/url-builder',
         'mage/storage',
         'Magento_Checkout/js/model/error-processor',
-        'Magento_Customer/js/model/customer',
-        'Magento_Checkout/js/model/full-screen-loader',
-        'Divido_DividoFinancing/js/model/credit-request'
+        'Magento_Customer/js/model/customer'
     ],
-    function ($, quote, urlBuilder, storage, errorProcessor, customer, fullScreenLoader, creditRequest) {
+    function ($, quote, urlBuilder, storage, errorProcessor, customer) {
         'use strict';
 
         return function (messageContainer) {
@@ -19,14 +17,6 @@ define(
                 paymentData = quote.paymentMethod();
 
             paymentData = {"method": paymentData.method};
-
-            creditRequest(quote)
-                .done(function () {
-                    console.log('done');
-                })
-                .fail(function () {
-                    console.log('fail');
-                });
 
 
             /**
@@ -48,21 +38,8 @@ define(
                 };
             }
 
-            fullScreenLoader.startLoader();
 
-            return storage.put(
-                serviceUrl, JSON.stringify(payload)
-            ).done(
-                function () {
-                    console.log('sparat, skickar till divido');
-                    //$.mage.redirect(window.checkoutConfig.payment.paypalExpress.redirectUrl[quote.paymentMethod().method]);
-                }
-            ).fail(
-                function (response) {
-                    errorProcessor.process(response, messageContainer);
-                    fullScreenLoader.stopLoader();
-                }
-            );
+            return storage.put( serviceUrl, JSON.stringify(payload));
         };
     }
 );

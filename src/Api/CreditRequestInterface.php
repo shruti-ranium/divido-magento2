@@ -12,5 +12,5 @@ interface CreditRequestInterface
      * @param string Quote ID
      * @return string Credit request URL
      */
-    public function create ($quoteId);
+    public function create ();
 }

@@ -3,16 +3,19 @@ define(
 		'jquery',
         'Magento_Checkout/js/view/payment/default',
 		'Magento_Checkout/js/model/quote',
-        'Divido_DividoFinancing/js/action/set-payment-method'
-
+        'Divido_DividoFinancing/js/action/set-payment-method',
+        'Divido_DividoFinancing/js/model/credit-request',
+        'Magento_Checkout/js/model/full-screen-loader'
     ],
-    function ($, Component, quote, setPaymentMethodAction) {
+    function ($, Component, quote, setPaymentMethodAction, creditRequest, fullScreenLoader) {
         'use strict';
 
         return Component.extend({
+            redirectAfterPlaceOrder: false,
+
             defaults: {
                 template: 'Divido_DividoFinancing/payment/form',
-                transactionResult: ''
+                transactionResult: '',
             },
 
             initObservable: function () {
@@ -47,9 +50,32 @@ define(
 			},
 
             continueToDivido: function () {
-                setPaymentMethodAction(this.messageContainer);
-            }
-        });
+
+                fullScreenLoader.startLoader();
+
+                var setPayment = setPaymentMethodAction(this.messageContainer)
+                    .done(function () {
+                        debugger
+                        creditRequest()
+                            .done(function () {
+                                fullScreenLoader.stopLoader();
+                                console.log('done');
+                            })
+                            .fail(function () {
+                                console.log('fail');
+                                fullScreenLoader.stopLoader();
+                            });
+                    })
+                    .fail(function (response) {
+                        errorProcessor.process(response, messageContainer);
+                        fullScreenLoader.stopLoader();
+                    }
+                );
+
+
+            //this.placeOrder();
+        }
+    });
 
     }
 );
