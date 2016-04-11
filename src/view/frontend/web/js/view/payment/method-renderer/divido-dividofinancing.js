@@ -50,13 +50,15 @@ define(
 			},
 
             continueToDivido: function () {
-
                 fullScreenLoader.startLoader();
+
+                var email   = $('#customer-email').val();
+                var planId  = $('select[name=divido_finance]').val();
+                var deposit = $('input[name=divido_deposit]').val();
 
                 var setPayment = setPaymentMethodAction(this.messageContainer)
                     .done(function () {
-                        debugger
-                        creditRequest()
+                        creditRequest(planId, deposit, email)
                             .done(function () {
                                 fullScreenLoader.stopLoader();
                                 console.log('done');

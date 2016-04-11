@@ -66,18 +66,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->cache->clean('matchingTag', [self::CACHE_DIVIDO_TAG]);
     }
 
-    public function creditRequest ()
+    public function creditRequest ($planId, $depositPercentage, $email)
     {
         ini_set('html_errors', 0);
         $apiKey = $this->getApiKey();
 
-        $deposit = 100;
-        $finance = 'F18C42E49-E58A-8F96-71EE-6703B1FE16F6';
-
         $quote   = $this->cart->getQuote();
         $billing = $quote->getBillingAddress();
         $country = $billing->getCountryId();
-
 
         $language = 'EN';
 
@@ -91,12 +87,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'last_name'     => $billing->getLastName(),
             'country'       => $country,
             'postcode'      => $billing->getPostcode(),
-            'email'         => $billing->getEmail(),
+            'email'         => $email,
             'mobile_number' => '',
             'phone_number'  => $billing->getTelephone(),
         ];
 
-        xdebug_break();
         $products = [];
         foreach ($quote->getAllItems() as $item) {
             $products[] = [
@@ -108,6 +103,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $totals = $quote->getTotals();
+        $grandTotal = $totals['grand_total']->getValue();
+        $deposit = round(($depositPercentage/100) * $grandTotal, 2);
 
         $shipping = $billing->getShippingAmount();
         if (! empty($shipping)) {
@@ -138,7 +135,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $request_data = [
             'merchant' => $apiKey,
             'deposit'  => $deposit,
-            'finance'  => $finance,
+            'finance'  => $planId,
             'country'  => $country,
             'language' => $language,
             'currency' => $currency,
@@ -171,10 +168,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if (empty($apiKey)) {
             return '';
         }
+
         $keyParts = explode('.', $apiKey);
         $relevantPart = array_shift($keyParts);
 
         $jsKey = strtolower($relevantPart);
+
+        return "//js.divido.dev/calculator.php";
 
         return "//cdn.divido.com/calculator/{$jsKey}.js";
     }

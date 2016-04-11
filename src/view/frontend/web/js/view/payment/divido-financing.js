@@ -14,7 +14,6 @@ define(
             component: 'Divido_DividoFinancing/js/view/payment/method-renderer/divido-dividofinancing'
         });
 
-        return Component.extend({
-        });
+        return Component.extend({});
     }
 );

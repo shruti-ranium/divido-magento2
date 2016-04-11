@@ -6,10 +6,14 @@ use Divido\DividoFinancing\Api\CreditRequestInterface;
 
 class CreditRequest implements CreditRequestInterface
 {
+    protected $helper, $logger, $req;
+
     public function __construct(
+        \Magento\Framework\App\Request\Http $request,
         \Divido\DividoFinancing\Helper\Data $helper,
         \Psr\Log\LoggerInterface            $logger
     ) {
+        $this->req    = $request;
         $this->helper = $helper;
         $this->logger = $logger;
     }
@@ -26,9 +30,12 @@ class CreditRequest implements CreditRequestInterface
 
         $response = [];
 
-        xdebug_Break();
+        $planId  = $this->req->getQuery('plan', null);
+        $deposit = $this->req->getQuery('deposit', null);
+        $email   = $this->req->getQuery('email', null);
+
         try {
-            $creditRequestUrl = $this->helper->creditRequest();
+            $creditRequestUrl = $this->helper->creditRequest($planId, $deposit, $email);
             $response['url']  = $creditRequestUrl;
         } catch (Exception $e) {
             $this->logger->addError($e);
