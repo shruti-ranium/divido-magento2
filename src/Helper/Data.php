@@ -4,28 +4,40 @@ namespace Divido\DividoFinancing\Helper;
 
 require __DIR__ . '/../vendor/divido/divido-php/lib/Divido.php';
 
+use \Divido\DividoFinancing\Model\LookupFactory;
+
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
 
     const CACHE_DIVIDO_TAG = 'divido_cache';
     const CACHE_PLANS_KEY  = 'divido_plans';
     const CACHE_PLANS_TTL  = 3600;
-    const CALLBACK_PATH    = '/rest/V1/divido/update';
-    const REDIRECT_PATH    = '/checkout/success';
+    const CALLBACK_PATH    = 'rest/V1/divido/update';
+    const REDIRECT_PATH    = 'checkout/success';
+
+    private
+        $config,
+        $logger,
+        $cache,
+        $cart,
+        $storeManager,
+        $lookupFactory;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\CacheInterface $cache,
         \Magento\Checkout\Model\Cart $cart,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        LookupFactory $lookupFactory
     )
     {
-        $this->config       = $scopeConfig;
-        $this->logger       = $logger;
-        $this->cache        = $cache;
-        $this->cart         = $cart;
-        $this->storeManager = $storeManager;
+        $this->config        = $scopeConfig;
+        $this->logger        = $logger;
+        $this->cache         = $cache;
+        $this->cart          = $cart;
+        $this->storeManager  = $storeManager;
+        $this->lookupFactory = $lookupFactory;
     }
 
     public function getAllPlans ()
@@ -70,6 +82,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         ini_set('html_errors', 0);
         $apiKey = $this->getApiKey();
+
+        \Divido::setMerchant($apiKey);
 
         $quote   = $this->cart->getQuote();
         $billing = $quote->getBillingAddress();
@@ -130,9 +144,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $redirect_url = $store->getBaseUrl() . self::REDIRECT_PATH;
 
         $quoteId = $quote->getId();
-        $quoteHash = '';
+        $salt = uniqid('', true);
+        $quoteHash = $this->hashQuote($salt, $quoteId);
 
-        $request_data = [
+        $requestData = [
             'merchant' => $apiKey,
             'deposit'  => $deposit,
             'finance'  => $planId,
@@ -149,9 +164,27 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'redirect_url' => $redirect_url,
         ];
 
-        var_dump($request_data);
+        $response = \Divido_CreditRequest::create($requestData);
 
-        return 'blaha';
+        if ($response->status == 'ok') {
+            $lookupModel = $this->lookupFactory->create();
+            $lookupModel->load($quoteId, 'quote_id');
+
+            $lookupModel->setData('quote_id', $quoteId);
+            $lookupModel->setData('salt', $salt);
+            $lookupModel->save();
+
+            return $response->url;
+        } else {
+            if ($response->status === 'error') {
+                throw new Exception($response->error);
+            }
+        }
+    }
+
+    public function hashQuote ($salt, $quoteId)
+    {
+        return hash('sha256', $salt.$quoteId);
     }
 
     public function getApiKey ()

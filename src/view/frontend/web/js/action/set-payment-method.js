@@ -4,10 +4,9 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/url-builder',
         'mage/storage',
-        'Magento_Checkout/js/model/error-processor',
         'Magento_Customer/js/model/customer'
     ],
-    function ($, quote, urlBuilder, storage, errorProcessor, customer) {
+    function ($, quote, urlBuilder, storage, customer) {
         'use strict';
 
         return function (messageContainer) {

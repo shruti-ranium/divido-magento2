@@ -5,9 +5,10 @@ define(
 		'Magento_Checkout/js/model/quote',
         'Divido_DividoFinancing/js/action/set-payment-method',
         'Divido_DividoFinancing/js/model/credit-request',
+        'Magento_Checkout/js/model/error-processor',
         'Magento_Checkout/js/model/full-screen-loader'
     ],
-    function ($, Component, quote, setPaymentMethodAction, creditRequest, fullScreenLoader) {
+    function ($, Component, quote, setPaymentMethodAction, creditRequest, errorProcessor, fullScreenLoader) {
         'use strict';
 
         return Component.extend({
@@ -59,17 +60,17 @@ define(
                 var setPayment = setPaymentMethodAction(this.messageContainer)
                     .done(function () {
                         creditRequest(planId, deposit, email)
-                            .done(function () {
+                            .done(function (data) {
                                 fullScreenLoader.stopLoader();
-                                console.log('done');
+                                window.location.replace(data[0]);
                             })
-                            .fail(function () {
-                                console.log('fail');
+                            .fail(function (response) {
                                 fullScreenLoader.stopLoader();
+                                errorProcessor.process(response, this.messageContainer);
                             });
                     })
                     .fail(function (response) {
-                        errorProcessor.process(response, messageContainer);
+                        errorProcessor.process(response, this.messageContainer);
                         fullScreenLoader.stopLoader();
                     }
                 );

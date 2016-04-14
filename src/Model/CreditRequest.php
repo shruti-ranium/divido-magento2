@@ -42,6 +42,6 @@ class CreditRequest implements CreditRequestInterface
             $response['error'] = $e->getMessage();
         }
 
-        return json_encode($response);
+        return $response;
     }
 }
