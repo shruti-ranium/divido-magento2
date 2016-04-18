@@ -78,6 +78,47 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->cache->clean('matchingTag', [self::CACHE_DIVIDO_TAG]);
     }
 
+    public function getQuotePlans ($quote)
+    {
+        $totals = $quote->getTotals();
+        $items  = $quote->getAllVisibleItems();
+
+
+        $grandTotal = $totals['grand_total']->getValue();
+
+        $plans = [];
+        foreach ($items as $item) {
+            $product = $item->getProduct();
+            $attributes= $product->getAttribute();
+
+
+            foreach ($attributes as $attr) {
+                /*
+                var_dump([
+                    'code' => $attr->getAttributeCode(),
+                    'isVis' => $attr->getIsVisibleOnFront(),
+                    'val' => $attr->getFrontend()->getValue($product),
+                    'hasdata' => $product->hasData($attr->getAttributeCode()),
+                ]);
+                 */
+            }
+            $pku           = $attributes['sku']->getFrontend()->getValue($product);
+            $plans_display = $attributes['divido_plans_display']->getFrontend()->getValue($product);
+            $plans_list    = $attributes['divido_plans_list']->getFrontend()->getValue($product);
+            /*
+            var_dump($pku);
+            var_dump($plans_display);
+            var_dump($plans_list);
+             */
+        }
+
+    }
+
+    public function getLocalPlans ($product) {
+
+
+    }
+
     public function creditRequest ($planId, $depositPercentage, $email)
     {
         ini_set('html_errors', 0);

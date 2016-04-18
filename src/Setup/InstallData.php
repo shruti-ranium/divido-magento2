@@ -23,19 +23,21 @@ class InstallData implements InstallDataInterface
 
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
 
+        $eavSetup->removeAttribute(\Magento\Catalog\Model\Product::ENTITY, 'divido_plans_display');
+        $eavSetup->removeAttribute(\Magento\Catalog\Model\Product::ENTITY, 'divido_plans_list');
+
         $eavSetup->addAttribute(
             \Magento\Catalog\Model\Product::ENTITY,
             'divido_plans_display',
             [
                 'group'        => 'Divido',
                 'type'         => 'varchar',
-                'frontend'     => '',
                 'label'        => 'Available financing plans',
                 'input'        => 'select',
-                'class'        => '',
                 'source'       => '\Divido\DividoFinancing\Model\Adminhtml\Source\ProductPlansDisplayed',
-                'global'       => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
+                'global'       => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
                 'visible'      => true,
+                'visible_on_front' => true,
                 'required'     => false,
                 'user_defined' => false,
                 'default'      => 'plans_default',
@@ -49,10 +51,8 @@ class InstallData implements InstallDataInterface
                 'group'        => 'Divido',
                 'type'         => 'varchar',
                 'backend'      => '\Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend',
-                'frontend'     => '',
                 'label'        => 'Financing plans',
                 'input'        => 'multiselect',
-                'class'        => '',
                 'source'       => '\Divido\DividoFinancing\Model\Adminhtml\Source\ProductPlanSelection',
                 'global'       => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
                 'visible'      => true,

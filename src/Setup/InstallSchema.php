@@ -58,6 +58,16 @@ class InstallSchema implements InstallSchemaInterface
                 ],
                 'Quote ID'
             )
+            ->addColumn(
+                'credit_request_id',
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'nullable' => true,
+                    'unsigned' => true,
+                ],
+                'Credit Request ID'
+            )
             ->setComment('Divido lookup table')
             ->setOption('type', 'InnoDB')
             ->setOption('charset', 'utf8');

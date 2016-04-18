@@ -9,6 +9,7 @@
                 <title>Pay in instalments with Divido</title>
                 <api_key/>
                 <min_order_total>0.50</min_order_total>
+                <currency>GBP</currency>
             </divido_financing>
         </payment>
     </default>
