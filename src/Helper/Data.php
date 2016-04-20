@@ -21,7 +21,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $cache,
         $cart,
         $storeManager,
-        $lookupFactory;
+        $lookupFactory,
+        $resource,
+        $connection;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -29,6 +31,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\CacheInterface $cache,
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\ResourceConnection $resource,
         LookupFactory $lookupFactory
     )
     {
@@ -37,7 +40,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->cache         = $cache;
         $this->cart          = $cart;
         $this->storeManager  = $storeManager;
+        $this->resource      = $resource;
         $this->lookupFactory = $lookupFactory;
+    }
+
+    public function getConnection ()
+    {
+        if (! $this->connection) {
+            $this->connection = $this->resource->getConnection('core_write');
+        }
+
+        return $this->connection;
+    }
+
+    public function cleanCache ()
+    {
+        $this->cache->clean('matchingTag', [self::CACHE_DIVIDO_TAG]);
     }
 
     public function getAllPlans ()
@@ -73,9 +91,27 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
-    public function cleanCache ()
+    public function getGlobalSelectedPlans ()
     {
-        $this->cache->clean('matchingTag', [self::CACHE_DIVIDO_TAG]);
+        $plansDisplayed = $this->config->getValue('payment/divido_financing/plans_displayed',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $plansDisplayed = $plansDisplayed ?: 'plans_all';
+
+        $plansSelection = $this->config->getValue('payment/divido_financing/plan_selection',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $plansSelection = $plansSelection ? explode(',', $plansSelection) : [];
+
+        $plans = $this->getAllPlans();
+
+        if ($plansDisplayed != 'plans_all') {
+            foreach ($plans as $key => $plan) {
+                if (! in_array($plan->id, $plansSelection)) {
+                    unset($plans[$key]);
+                }
+            }
+        }
+
+        return $plans;
     }
 
     public function getQuotePlans ($quote)
@@ -83,40 +119,67 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $totals = $quote->getTotals();
         $items  = $quote->getAllVisibleItems();
 
-
         $grandTotal = $totals['grand_total']->getValue();
 
         $plans = [];
         foreach ($items as $item) {
-            $product = $item->getProduct();
-            $attributes= $product->getAttribute();
-
-
-            foreach ($attributes as $attr) {
-                /*
-                var_dump([
-                    'code' => $attr->getAttributeCode(),
-                    'isVis' => $attr->getIsVisibleOnFront(),
-                    'val' => $attr->getFrontend()->getValue($product),
-                    'hasdata' => $product->hasData($attr->getAttributeCode()),
-                ]);
-                 */
-            }
-            $pku           = $attributes['sku']->getFrontend()->getValue($product);
-            $plans_display = $attributes['divido_plans_display']->getFrontend()->getValue($product);
-            $plans_list    = $attributes['divido_plans_list']->getFrontend()->getValue($product);
-            /*
-            var_dump($pku);
-            var_dump($plans_display);
-            var_dump($plans_list);
-             */
+            $product    = $item->getProduct();
+            $localPlans = $this->getLocalPlans($product->getId());
+            $plans      = array_merge($plans, $localPlans);
         }
 
+        foreach ($plans as $key => $plan) {
+            if ($grandTotal < $plan->min_amount) {
+                unset($plans[$key]);
+            }
+        }
+
+        return $plans;
     }
 
-    public function getLocalPlans ($product) {
+    public function getLocalPlans ($productId)
+    {
+        $dbConn  = $this->getConnection();
+        $tblCpev = $this->resource->getTableName('catalog_product_entity_varchar'); 
+        $tblEava = $this->resource->getTableName('eav_attribute'); 
+        
+        $sqlTpl = "
+            select cpev.value 
+            from %s cpev 
+                join %s eava 
+                on eava.attribute_id = cpev.attribute_id 
+            where eava.attribute_code = '%s' 
+            and cpev.entity_id = %s";
 
+        $sqlDisplay = sprintf($sqlTpl, $tblCpev, $tblEava, 'divido_plans_display', $productId);
+        $sqlPlans   = sprintf($sqlTpl, $tblCpev, $tblEava, 'divido_plans_list', $productId);
 
+        $globalProdSelection = $this->config->getValue('payment/divido_financing/product_selection',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+        $display = $dbConn->fetchRow($sqlDisplay);
+        if ($display) {
+            $display = $display['value'];
+        }
+
+        $productPlans = $dbConn->fetchRow($sqlPlans);
+        if ($productPlans) {
+            $productPlans = $productPlans['value'];
+            $productPlans = empty($productPlans) ? [] : explode(',', $productPlans);
+        }
+
+        if (!$display || $display == 'product_plans_default' || (empty($productPlans) && $globalProdSelection != 'products_selected')) {
+            return $this->getGlobalSelectedPlans();
+        }
+
+        $plans = $this->getAllPlans();
+        foreach ($plans as $key => $plan) {
+            if (! in_array($plan->id, $productPlans)) {
+                unset($plans[$key]);
+            }
+        }
+
+        return $plans;
     }
 
     public function creditRequest ($planId, $depositPercentage, $email)
@@ -251,5 +314,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return "//js.divido.dev/calculator.php";
 
         return "//cdn.divido.com/calculator/{$jsKey}.js";
+    }
+
+    public function plans2list ($plans)
+    {
+        $plansBare = array_map(function ($plan) {
+            return $plan->id;
+        }, $plans);
+
+        $plansBare = array_unique($plansBare);
+
+        return implode(',', $plansBare);
     }
 }
