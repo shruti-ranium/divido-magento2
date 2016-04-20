@@ -9,6 +9,20 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 final class ConfigProvider implements ConfigProviderInterface
 {
     const CODE = 'divido_financing';
+
+    private
+        $cart,
+        $helper;
+
+    public function __construct (
+        \Magento\Checkout\Model\Cart $cart,
+        \Divido\DividoFinancing\Helper\Data $helper
+    )
+    {
+        $this->helper = $helper;
+        $this->cart  = $cart;
+    }
+
     /**
      * Retrieve assoc array of checkout configuration
      *
@@ -16,13 +30,14 @@ final class ConfigProvider implements ConfigProviderInterface
      */
     public function getConfig()
     {
+        $quote = $this->cart->getQuote();
+        $plans = $this->helper->getQuotePlans($quote);
+        $plans = $this->helper->plans2list($plans);
+
         return [
             'payment' => [
                 self::CODE => [
-                    'transactionResults' => [
-                        1 => __('Success'),
-                        0 => __('Fraud')
-                    ]
+                    'cart_plans' => $plans,
                 ]
             ]
         ];
