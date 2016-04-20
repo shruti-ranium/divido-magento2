@@ -28,7 +28,7 @@
         <div class="field required">
             <div class="control">
 
-                <div id="divido-checkout" data-bind="mageInit: {'dividocalculator':{}}" data-divido-calculator class="divido-calculator divido-theme-blue" data-divido-amount="1000" data-divido-plans="">
+                <div id="divido-checkout" data-bind="mageInit: {'dividocalculator':{}}, attr: {'data-divido-amount': window.checkoutConfig.totalsData.base_grand_total, 'data-divido-plans': window.checkoutConfig.payment.divido_financing.cart_plans}" data-divido-calculator class="divido-calculator divido-theme-blue">
                     <h1>
                         <a href="https://www.divido.com" target="_blank" class="divido-logo divido-logo-sm" style="float:right;">Divido</a>
                         Pay in instalments
