@@ -15,7 +15,7 @@ class ProductPlansDisplayed extends \Magento\Eav\Model\Entity\Attribute\Source\A
     {
         return [
             [
-                'value' => 'product_plans_all',
+                'value' => 'product_plans_default',
                 'label' => 'Display default plans',
             ],
             [
