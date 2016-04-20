@@ -8,6 +8,5 @@ class PaymentMethodIsActive implements ObserverInterface
 {
     public function execute (\Magento\Framework\Event\Observer $observer)
     {
-        xdebug_break();
     }
 }
