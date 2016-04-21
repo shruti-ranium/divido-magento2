@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="payment_method_is_active">
-        <observer name="belvg_infscroll_layout_render_before" instance="Divido\DividoFinancing\Observer\PaymentMethodIsActive" />
-    </event>  
+    <!-- event name="payment_method_is_active">
+        <observer name="divido_dividofinancing_payment_method_is_active" instance="Divido\DividoFinancing\Observer\PaymentMethodIsActive" />
+    </event -->  
 </config>
