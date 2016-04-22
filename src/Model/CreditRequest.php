@@ -26,13 +26,13 @@ class CreditRequest implements CreditRequestInterface
      * @param string Quote ID
      * @return string Credit request URL
      */
-    public function create () {
-
+    public function create () 
+    {
         $response = [];
 
-        $planId  = $this->req->getQuery('plan', null);
+        $planId  = $this->req->getQuery('plan',    null);
         $deposit = $this->req->getQuery('deposit', null);
-        $email   = $this->req->getQuery('email', null);
+        $email   = $this->req->getQuery('email',   null);
 
         try {
             $creditRequestUrl = $this->helper->creditRequest($planId, $deposit, $email);
@@ -43,5 +43,16 @@ class CreditRequest implements CreditRequestInterface
         }
 
         return $response;
+    }
+
+    /**
+     * Update an order with results from credit request
+     *
+     * @api
+     * @return string Update status
+     */
+    public function update ()
+    {
+        return  'ok';
     }
 }

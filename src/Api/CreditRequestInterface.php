@@ -5,7 +5,7 @@ namespace Divido\DividoFinancing\Api;
 interface CreditRequestInterface
 {
     /**
-     * Create a credit request as Divido, return a URL to complete the credit 
+     * Create a credit request at Divido, return a URL to complete the credit 
      * request.
      *
      * @api
@@ -13,4 +13,12 @@ interface CreditRequestInterface
      * @return string Credit request URL
      */
     public function create ();
+
+    /**
+     * Update an order with results from credit request
+     *
+     * @api
+     * @return string Update status
+     */
+    public function update ();
 }

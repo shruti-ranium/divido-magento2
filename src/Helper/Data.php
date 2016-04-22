@@ -5,6 +5,7 @@ namespace Divido\DividoFinancing\Helper;
 require __DIR__ . '/../vendor/divido/divido-php/lib/Divido.php';
 
 use \Divido\DividoFinancing\Model\LookupFactory;
+use Magento\Framework\UrlInterface;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -12,8 +13,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CACHE_DIVIDO_TAG = 'divido_cache';
     const CACHE_PLANS_KEY  = 'divido_plans';
     const CACHE_PLANS_TTL  = 3600;
-    const CALLBACK_PATH    = 'rest/V1/divido/update';
-    const REDIRECT_PATH    = 'checkout/success';
+    const CALLBACK_PATH    = 'rest/V1/divido/update/';
+    const REDIRECT_PATH    = 'checkout/onepage/success/';
+    const CHECKOUT_PATH    = 'checkout/';
 
     private
         $config,
@@ -23,7 +25,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $storeManager,
         $lookupFactory,
         $resource,
-        $connection;
+        $connection,
+        $urlBuilder;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -32,7 +35,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\ResourceConnection $resource,
-        LookupFactory $lookupFactory
+        LookupFactory $lookupFactory,
+        UrlInterface $urlBuilder
     )
     {
         $this->config        = $scopeConfig;
@@ -42,6 +46,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->storeManager  = $storeManager;
         $this->resource      = $resource;
         $this->lookupFactory = $lookupFactory;
+        $this->urlBuilder    = $urlBuilder;
     }
 
     public function getConnection ()
@@ -244,11 +249,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             ];
         }
 
-        $response_url = $store->getBaseUrl() . self::CALLBACK_PATH;
-        $redirect_url = $store->getBaseUrl() . self::REDIRECT_PATH;
 
-        $quoteId = $quote->getId();
-        $salt = uniqid('', true);
+        $response_url = $this->urlBuilder->getUrl(self::CALLBACK_PATH);
+        $redirect_url = $this->urlBuilder->getUrl(self::REDIRECT_PATH);
+        $checkout_url = $this->urlBuilder->getUrl(self::CHECKOUT_PATH);
+
+        $quoteId   = $quote->getId();
+        $salt      = uniqid('', true);
         $quoteHash = $this->hashQuote($salt, $quoteId);
 
         $requestData = [
@@ -276,12 +283,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
             $lookupModel->setData('quote_id', $quoteId);
             $lookupModel->setData('salt', $salt);
+            $lookupModel->setData('proposal_id', $response->id);
             $lookupModel->save();
 
             return $response->url;
         } else {
             if ($response->status === 'error') {
-                throw new Exception($response->error);
+                throw new \Exception($response->error);
             }
         }
     }
