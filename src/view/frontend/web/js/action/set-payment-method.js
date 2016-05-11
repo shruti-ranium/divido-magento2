@@ -17,7 +17,6 @@ define(
 
             paymentData = {"method": paymentData.method};
 
-
             /**
              * Checkout for guest and registered customer.
              */
@@ -36,7 +35,6 @@ define(
                     method: paymentData
                 };
             }
-
 
             return storage.put( serviceUrl, JSON.stringify(payload));
         };
