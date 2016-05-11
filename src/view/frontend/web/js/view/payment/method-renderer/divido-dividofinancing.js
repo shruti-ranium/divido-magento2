@@ -74,11 +74,7 @@ define(
                         fullScreenLoader.stopLoader();
                     }
                 );
-
-
-            //this.placeOrder();
-        }
-    });
-
+            }
+        });
     }
 );
