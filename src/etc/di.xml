@@ -1,7 +1,4 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Divido\DividoFinancing\Api\CreditRequestInterface" type="Divido\DividoFinancing\Model\CreditRequest" />
-    <type name="Magento\Payment\Model\Checks\Composite">
-        <plugin name="divido_isapplicable" type="Divido\DividoFinancing\Plugin\ToggleAvailabilityPlugin"/>
-    </type>
 </config>
