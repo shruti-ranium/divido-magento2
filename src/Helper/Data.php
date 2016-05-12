@@ -14,7 +14,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CACHE_PLANS_KEY  = 'divido_plans';
     const CACHE_PLANS_TTL  = 3600;
     const CALLBACK_PATH    = 'rest/V1/divido/update/';
-    const REDIRECT_PATH    = 'checkout/onepage/success/';
+    const REDIRECT_PATH    = 'divido/financing/success/';
     const CHECKOUT_PATH    = 'checkout/';
 
     private
@@ -198,6 +198,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $billing = $quote->getBillingAddress();
         $country = $billing->getCountryId();
 
+        $quote->setCustomerEmail($email);
+        $quote->save();
+
         $language = 'EN';
 
         $store = $this->storeManager->getStore();
@@ -249,14 +252,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             ];
         }
 
-
-        $response_url = $this->urlBuilder->getUrl(self::CALLBACK_PATH);
-        $redirect_url = $this->urlBuilder->getUrl(self::REDIRECT_PATH);
-        $checkout_url = $this->urlBuilder->getUrl(self::CHECKOUT_PATH);
-
         $quoteId   = $quote->getId();
         $salt      = uniqid('', true);
         $quoteHash = $this->hashQuote($salt, $quoteId);
+
+        $response_url = $this->urlBuilder->getUrl(self::CALLBACK_PATH);
+        $checkout_url = $this->urlBuilder->getUrl(self::CHECKOUT_PATH);
+        $redirect_url = $this->urlBuilder->getUrl(self::REDIRECT_PATH, 
+            ['quote_id' => $quoteId]);
 
         $requestData = [
             'merchant' => $apiKey,
