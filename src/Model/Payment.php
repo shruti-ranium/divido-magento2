@@ -9,7 +9,24 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_code = self::METHOD_CODE;
     protected $_isOffline = true;
 
-    public function __construct(
+    private $dividoHelper;
+
+    /**
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
+     * @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
+     * @param \Magento\Payment\Helper\Data $paymentData
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \Magento\Payment\Model\Method\Logger $logger,
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
+     * @param \Divido\DividoFinancing\Helper\Data $dividoHelper
+     * @param array $data
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
+    public function __construct (
+        \Divido\DividoFinancing\Helper\Data $dividoHelper,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
@@ -33,10 +50,43 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
             $resourceCollection,
             $data
         );
+
         $this->_paymentData = $paymentData;
         $this->_scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->initializeData($data);
+        $this->dividoHelper = $dividoHelper;
+    }
+
+    public function isAvailable (\Magento\Quote\Api\Data\CartInterface $quote = null)
+    {
+        $parentAvailable = parent::isAvailable($quote);
+
+        if (! $parentAvailable) {
+            return false;
+        }
+
+        $plans = $this->dividoHelper->getQuotePlans($quote);
+        if (! $plans) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function canUseForCurrency ($currencyCode)
+    {
+        return $currencyCode === 'GBP';
+    }
+
+    public function canUseForCountry ($country) 
+    {
+        $parentOk = parent::canUseForCountry($country);
+        if (! $parentOk) {
+            return false;
+        }
+
+        return $country === 'GB';
     }
 
     public function authorize (\Magento\Payment\Model\InfoInterface $payment, $amount)
