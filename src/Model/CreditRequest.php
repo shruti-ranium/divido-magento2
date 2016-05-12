@@ -104,6 +104,9 @@ class CreditRequest implements CreditRequestInterface
             exit('Cannot verify request');
         }
 
+        $lookup->setData('application_id', $data->application);
+        $lookup->save();
+
         $salt = $lookup->getSalt();
         $hash = $this->helper->hashQuote($salt, $data->metadata->quote_id);
         if ($hash !== $data->metadata->quote_hash) {
