@@ -134,7 +134,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         foreach ($plans as $key => $plan) {
-            if ($grandTotal < $plan->min_amount) {
+            $planMinTotal = $grandTotal - ($grandTotal * ($plan->min_deposit / 100));
+            if ($planMinTotal < $plan->min_amount) {
                 unset($plans[$key]);
             }
         }
