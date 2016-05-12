@@ -337,4 +337,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         return implode(',', $plansBare);
     }
+
+    public function getLookupForOrder ($order)
+    {
+        $quoteId = $order->getQuoteId();
+
+        $lookupModel = $this->lookupFactory->create();
+        $lookupModel->load($quoteId, 'quote_id');
+        if (! $lookupModel->getId()) {
+            return null;
+        }
+
+        return [
+            'proposal_id' => $lookupModel->getData('proposal_id'),
+            'application_id' => $lookupModel->getData('application_id'),
+        ];
+    }
 }

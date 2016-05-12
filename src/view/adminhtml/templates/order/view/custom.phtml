@@ -1,0 +1,8 @@
+<?php $dividoInfo = $block->getDividoInfo(); ?>
+
+<?php if ($dividoInfo): ?>
+<div style="margin-top: 1rem">
+    <strong><?php /* @escapeNotVerified */ echo __('Proposal ID') ?></strong>: <?php echo $dividoInfo['proposal_id']; ?><br>
+    <strong><?php /* @escapeNotVerified */ echo __('Application ID') ?></strong>: <?php echo $dividoInfo['application_id']; ?>
+</div>
+<?php endif; ?>
