@@ -8,7 +8,7 @@
         "magento/module-payment": "100.0.*",
         "magento/framework": "100.0.*",
         "magento/magento-composer-installer": "100.0.*",
-        "divido/divido-php": "1.x"
+        "divido/divido-php": ">=1.1.1"
     },
     "type": "magento2-module",
     "version": "1.0.0",
