@@ -89,7 +89,4 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
         return $country === 'GB';
     }
 
-    public function authorize (\Magento\Payment\Model\InfoInterface $payment, $amount)
-    {
-    }
 }
