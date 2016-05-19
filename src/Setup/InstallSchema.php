@@ -11,6 +11,7 @@ class InstallSchema implements InstallSchemaInterface
 {
     public function install (SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
+        xdebug_break();
         $installer = $setup;
         $installer->startSetup();
 
@@ -54,9 +55,30 @@ class InstallSchema implements InstallSchemaInterface
                 null,
                 [
                     'nullable' => false,
-                    'unsigned' => true
+                    'unsigned' => true,
                 ],
                 'Quote ID'
+            )
+            ->addColumn(
+                'order_id',
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'nullable' => true,
+                    'unsigned' => true,
+                ],
+                'Order ID'
+            )
+            ->addColumn(
+                'deposit_value',
+                Table::TYPE_NUMERIC,
+                null,
+                [
+                    'nullable' => true,
+                    'precision' => 10,
+                    'scale' => 2,
+                ],
+                'Deposit Value'
             )
             ->addColumn(
                 'proposal_id',
@@ -77,6 +99,24 @@ class InstallSchema implements InstallSchemaInterface
                     'unsigned' => true,
                 ],
                 'Application ID'
+            )
+            ->addColumn(
+                'canceled',
+                Table::TYPE_BOOLEAN,
+                null,
+                [
+                    'nullable' => true,
+                ],
+                'Application was canceled'
+            )
+            ->addColumn(
+                'declined',
+                Table::TYPE_BOOLEAN,
+                null,
+                [
+                    'nullable' => true,
+                ],
+                'Application was declined'
             )
             ->setComment('Divido lookup table')
             ->setOption('type', 'InnoDB')
