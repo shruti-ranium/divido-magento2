@@ -1,8 +1,31 @@
 <?php $dividoInfo = $block->getDividoInfo(); ?>
 
 <?php if ($dividoInfo): ?>
-<div style="margin-top: 1rem">
-    <strong><?php /* @escapeNotVerified */ echo __('Proposal ID') ?></strong>: <?php echo $dividoInfo['proposal_id']; ?><br>
-    <strong><?php /* @escapeNotVerified */ echo __('Application ID') ?></strong>: <?php echo $dividoInfo['application_id']; ?>
+<div style="margin-top: 1rem; display: table; border-spacing: 1rem 0.5rem;">
+    <div style="display: table-row;">
+        <div style="display: tasble-cell;">
+            <strong><?php echo __('Proposal ID') ?></strong> 
+        </div>
+        <div style="display: table-cell;">
+            <?php echo $dividoInfo['proposal_id']; ?>
+        </div>
+    </div>
+    <div style="display: table-row;">
+        <div style="display: tasble-cell;">
+            <strong><?php echo __('Application ID') ?></strong>
+        </div>
+        <div style="display: table-cell;">
+            <?php echo $dividoInfo['application_id']; ?>
+        </div>
+    </div>
+
+    <div style="display: table-row;">
+        <div style="display: tasble-cell;">
+            <strong><?php echo __('Deposit amount') ?></strong>
+        </div>
+        <div style="display: table-cell;">
+            <?php echo $dividoInfo['deposit_amount']; ?>
+        </div>
+    </div>
 </div>
 <?php endif; ?>
