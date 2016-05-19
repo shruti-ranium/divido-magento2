@@ -24,7 +24,6 @@ class Custom extends \Magento\Backend\Block\Template
 
     public function getDividoInfo ()
     {
-        xdebug_break();
         $info = null;
         $order = $this->getOrder();
 
