@@ -1,14 +1,9 @@
 <?php
 
-http://magento19.divido.dev/index.php/pay/payment/return/quote_id/30/
-
-//http://magento19.divido.dev/divido_callback.php
-// http://opencart-integration.divido.dev/index.php?route=payment/divido/update
-//
-
 $quote_id = $argv[1];
+$status  = $argv[2];
 
-$db = new mysqli('localhost', 'root', 'root', 'magento20');
+$db = new mysqli('magento20.divido.dev', 'root', '', 'magento20');
 if ($db->connect_errno) {
     die($db->connect_error);
 }
@@ -34,7 +29,6 @@ $statuses = [
     'CANCELED',
 ];
 
-$status = $statuses[0];
 $hash = hash('sha256', $salt.$quote_id);
 
 $req_tpl = [
@@ -51,4 +45,6 @@ $req_tpl = [
 $data = json_encode($req_tpl);
 $cmd = "curl -v -X POST -d '{$data}' -H 'Content-Type: application/json' {$url}";
 
-echo $cmd;
+system($cmd);
+
+echo "\n\nhttp://magento20.divido.dev/divido/financing/success/?quote_id={$quote_id}";
