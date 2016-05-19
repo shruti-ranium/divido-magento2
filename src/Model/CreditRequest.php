@@ -162,7 +162,6 @@ class CreditRequest implements CreditRequestInterface
         $lookup->setData('order_id', $orderId);
         $lookup->save();
 
-        xdebug_break();
         if ($data->status == self::STATUS_SIGNED) {
             $status = self::NEW_ORDER_STATUS;
             $status_override = $this->config->getValue('payment/divido_financing/order_status',

@@ -11,7 +11,6 @@ class InstallSchema implements InstallSchemaInterface
 {
     public function install (SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        xdebug_break();
         $installer = $setup;
         $installer->startSetup();
 
