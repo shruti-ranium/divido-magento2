@@ -196,8 +196,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Divido::setMerchant($apiKey);
 
         $quote   = $this->cart->getQuote();
-        $billing = $quote->getBillingAddress();
-        $country = $billing->getCountryId();
+        $shipAddr = $quote->getShippingAddress();
+        $country = $shipAddr->getCountryId();
 
         $quote->setCustomerEmail($email);
         $quote->save();
@@ -209,14 +209,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         $customer = [
             'title'         => '',
-            'first_name'    => $billing->getFirstName(),
-            'middle_name'   => $billing->getMiddleName(),
-            'last_name'     => $billing->getLastName(),
+            'first_name'    => $shipAddr->getFirstName(),
+            'middle_name'   => $shipAddr->getMiddleName(),
+            'last_name'     => $shipAddr->getLastName(),
             'country'       => $country,
-            'postcode'      => $billing->getPostcode(),
+            'postcode'      => $shipAddr->getPostcode(),
             'email'         => $email,
             'mobile_number' => '',
-            'phone_number'  => $billing->getTelephone(),
+            'phone_number'  => $shipAddr->getTelephone(),
         ];
 
         $products = [];
@@ -233,7 +233,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $grandTotal = $totals['grand_total']->getValue();
         $deposit = round(($depositPercentage/100) * $grandTotal, 2);
 
-        $shipping = $billing->getShippingAmount();
+        $shipping = $shipAddr->getShippingAmount();
         if (! empty($shipping)) {
             $products[] = [
                 'type'     => 'product',
@@ -243,7 +243,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             ];
         }
 
-        $discount = $billing->getDiscountAmount();
+        $discount = $shipAddr->getDiscountAmount();
         if (! empty($discount)) {
             $products[] = [
                 'type'     => 'product',
@@ -287,6 +287,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
             $lookupModel->setData('quote_id', $quoteId);
             $lookupModel->setData('salt', $salt);
+            $lookupModel->setData('deposit_value', $deposit);
             $lookupModel->setData('proposal_id', $response->id);
             $lookupModel->save();
 
