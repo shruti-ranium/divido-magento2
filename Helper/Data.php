@@ -2,8 +2,6 @@
 
 namespace Divido\DividoFinancing\Helper;
 
-require __DIR__ . '/../vendor/divido/divido-php/lib/Divido.php';
-
 use \Divido\DividoFinancing\Model\LookupFactory;
 use Magento\Framework\UrlInterface;
 
