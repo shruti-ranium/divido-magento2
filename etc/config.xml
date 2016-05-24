@@ -3,7 +3,7 @@
     <default>
         <payment>
             <divido_financing>
-                <active>1</active>
+                <active>0</active>
                 <model>Divido\DividoFinancing\Model\Payment</model>
                 <title>Pay in instalments with Divido</title>
                 <api_key/>
