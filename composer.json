@@ -1,5 +1,5 @@
 {
-    "name": "divido/dividofinancing",
+    "name": "dividofinancialservices/magento2-module",
     "description": "Divido financing gateway",
     "require": {
         "divido/divido-php": ">=1.1.1"
@@ -11,8 +11,7 @@
     ],
     "autoload": {
         "files": [
-            "registration.php",
-            "vendor/autoload.php"
+            "registration.php"
         ],
         "psr-4": {
             "Divido\\DividoFinancing\\": ""
