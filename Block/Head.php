@@ -4,14 +4,14 @@ namespace Divido\DividoFinancing\Block;
 
 class Head extends \Magento\Framework\View\Element\Template
 {
+    private $helper;
+
     public function __construct (
         \Magento\Framework\View\Element\Template\Context $context,
-        \Divido\DividoFinancing\Helper\Data $helper,
-        \Psr\Log\LoggerInterface            $logger
+        \Divido\DividoFinancing\Helper\Data $helper
     )
     {
         $this->helper = $helper;
-        $this->logger = $logger;
         parent::__construct($context);
     }
 
