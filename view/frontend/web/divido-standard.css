@@ -1,0 +1,40 @@
+#divido-checkout {
+    width: 300px;
+    margin: auto;
+}
+
+#divido-checkout .divido-element {
+    margin-bottom: 20px;
+}
+
+#divido-checkout .divido-headline {
+    font-size: 1.6em;
+}
+
+#divido-checkout .divido-deposit, #divido-checkout .divido-plans {
+    font-weight: bold;
+}
+
+#divido-checkout .divido-deposit input {
+    width: 250px;
+    margin-right: 10px;
+}
+
+#divido-checkout .divido-table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 5px;
+}
+
+#divido-checkout .divido-row {
+    display: table-row;
+}
+
+#divido-checkout .divido-cell {
+    display: table-cell;
+}
+
+#divido-checkout .divido-cell-head {
+    font-weight: bold;
+    padding-right: 10px;
+}
