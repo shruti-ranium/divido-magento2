@@ -1,3 +1,4 @@
 <?php /* @var $block \Divido\DividoFinancing\Block\Product\View\Extra */?>
-<?php $_product = $block->getProduct() ?>
-<div data-divido-widget data-divido-plans="<?php echo $block->getProductPlans(); ?>" data-divido-amount="<?php echo $block->getAmount(); ?>">XXX</div>
+<?php if ($plans = $block->getProductPlans()): ?>
+  <div data-divido-widget data-divido-plans="<?php echo $plans; ?>" data-divido-amount="<?php echo $block->getAmount(); ?>"></div>
+<?php endif; ?>
