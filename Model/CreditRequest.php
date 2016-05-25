@@ -119,8 +119,14 @@ class CreditRequest implements CreditRequestInterface
             exit('Cannot verify request' . self::VERSION);
         }
 
-        $lookup->setData('application_id', $data->application);
-        $lookup->save();
+        if (! isset($data->event) || $data->event != 'application-status-update') {
+            return self::VERSION;
+        }
+
+        if (isset($data->application)) {
+            $lookup->setData('application_id', $data->application);
+            $lookup->save();
+        }
 
         $order = $this->order->loadByAttribute('quote_id', $quoteId);
 
