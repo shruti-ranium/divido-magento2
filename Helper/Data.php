@@ -143,6 +143,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getLocalPlans ($productId)
     {
+		$isActive = $this->config->getValue('payment/divido_financing/active',
+			\Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+		if (! $isActive) {
+			return[];
+		}
+
         $dbConn  = $this->getConnection();
         $tblCpev = $this->resource->getTableName('catalog_product_entity_varchar'); 
         $tblEava = $this->resource->getTableName('eav_attribute'); 
