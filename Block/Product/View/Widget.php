@@ -4,15 +4,18 @@ namespace Divido\DividoFinancing\Block\Product\View;
 
 class Widget extends \Magento\Catalog\Block\Product\AbstractProduct
 {
-    private $helper;
+    private 
+		$helper, 
+		$catHelper;
 
     public function __construct (
         \Divido\DividoFinancing\Helper\Data $helper,
-        \Magento\Catalog\Block\Product\Context $context, 
+        \Magento\Catalog\Block\Product\Context $context,
         array $data = []
     )
     {
-        $this->helper = $helper;
+        $this->helper    = $helper;
+        $this->catHelper = $context->getCatalogHelper();
 
         parent::__construct($context, $data);
     }
@@ -32,8 +35,10 @@ class Widget extends \Magento\Catalog\Block\Product\AbstractProduct
 
     public function getAmount ()
     {
-        $price = $this->getProduct()->getFinalPrice();
+        $product = $this->getProduct();
+        $price = $product->getFinalPrice();
+        $priceIncVat = $this->catHelper->getTaxPrice($product, $price, true);
 
-        return $price;
+        return $priceIncVat;
     }
 }
