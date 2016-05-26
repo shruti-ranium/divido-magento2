@@ -328,8 +328,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         $jsKey = strtolower($relevantPart);
 
-        return "//js.divido.dev/calculator.php";
-
         return "//cdn.divido.com/calculator/{$jsKey}.js";
     }
 
