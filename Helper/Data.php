@@ -261,7 +261,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $salt      = uniqid('', true);
         $quoteHash = $this->hashQuote($salt, $quoteId);
 
-        $response_url = $this->urlBuilder->getUrl(self::CALLBACK_PATH);
+        $response_url = $this->urlBuilder->getBaseUrl() . self::CALLBACK_PATH;
         $checkout_url = $this->urlBuilder->getUrl(self::CHECKOUT_PATH);
         $redirect_url = $this->urlBuilder->getUrl(self::REDIRECT_PATH, 
             ['quote_id' => $quoteId]);
@@ -281,6 +281,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'products'     => $products,
             'response_url' => $response_url,
             'redirect_url' => $redirect_url,
+            'checkout_url' => $checkout_url,
         ];
 
         $response = \Divido_CreditRequest::create($requestData);
