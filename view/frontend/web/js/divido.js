@@ -6,7 +6,7 @@ define([
 
     $.widget('divido.calculator', {
         _create: function () {
-            divido_calculator(this.element[0]);
+            var divido_calc = new Divido(this.element[0]);
         }
     });
 
