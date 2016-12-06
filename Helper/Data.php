@@ -119,6 +119,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getQuotePlans ($quote)
     {
+        if (!$quote) {
+            return false;
+        }
+
         $totals = $quote->getTotals();
         $items  = $quote->getAllVisibleItems();
 
