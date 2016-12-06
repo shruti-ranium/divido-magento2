@@ -60,18 +60,21 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 
     public function isAvailable (\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
-        $parentAvailable = parent::isAvailable($quote);
+        if (! is_null($quote)) {
+            $cartThreshhold = $this->_scopeConfig->getValue('payment/divido_financing/cart_threshold',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
-        if (! $parentAvailable) {
-            return false;
+            if (is_numeric($cartThreshhold)  && $quote->getBaseGrandTotal() < $cartThreshhold) {
+                return false;
+            }
+
+            $plans = $this->dividoHelper->getQuotePlans($quote);
+            if (! $plans) {
+                return false;
+            }
         }
 
-        $plans = $this->dividoHelper->getQuotePlans($quote);
-        if (! $plans) {
-            return false;
-        }
-
-        return true;
+        return parent::isAvailable($quote);
     }
 
     public function canUseForCurrency ($currencyCode)

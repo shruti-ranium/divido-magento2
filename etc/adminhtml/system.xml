@@ -18,28 +18,41 @@
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="debug" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Debug</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
-                <field id="order_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Order status on application accepted</label>
+                <field id="creation_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Create order on</label>
+                    <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\DividoStatus</source_model>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="51" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>New order status</label>
 				    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
-                <field id="product_selection" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+
+                <field id="cart_threshold" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Cart threshold</label>
+                </field>
+
+                <field id="product_selection" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Product selection</label>
                     <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\ProductSelection</source_model>
                 </field>
-                <field id="price_threshold" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="price_threshold" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Price threshold</label>
                     <depends>
                         <field id="product_selection">products_price_threshold</field>
                     </depends>
                 </field>
-                <field id="plans_displayed" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="plans_displayed" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Displayed plans</label>
                     <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\PlansDisplayed</source_model>
                 </field>
-                <field id="plan_selection" translate="label" type="multiselect" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="plan_selection" translate="label" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Plan selection</label>
                     <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\PlanSelection</source_model>
                     <depends>
