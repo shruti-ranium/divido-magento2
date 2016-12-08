@@ -7,7 +7,7 @@ use Divido\DividoFinancing\Api\CreditRequestInterface;
 class CreditRequest implements CreditRequestInterface
 {
     const
-        VERSION              = 'M2-1.0.0',
+        VERSION              = 'M2-1.1.0',
         NEW_ORDER_STATUS     = 'processing',
         STATUS_ACCEPTED      = 'ACCEPTED',
         STATUS_ACTION_LENDER = 'ACTION-LENDER',
@@ -44,14 +44,18 @@ class CreditRequest implements CreditRequestInterface
         $logger,
         $config,
         $lookupFactory,
-        $quoteManagement;
+        $quoteManagement,
+        $resourceInterface,
+        $resultJsonFactory;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\Request\Http                $request,
+        \Magento\Framework\Controller\Result\JsonFactory   $resultJsonFactory,
         \Magento\Sales\Model\Order                         $order,
         \Magento\Quote\Model\Quote                         $quote,
         \Magento\Quote\Model\QuoteManagement               $quoteManagement,
+		\Magento\Framework\Module\ResourceInterface        $resourceInterface,
         \Divido\DividoFinancing\Helper\Data                $helper,
         \Divido\DividoFinancing\Model\LookupFactory        $lookupFactory,
         \Psr\Log\LoggerInterface                           $logger
@@ -64,6 +68,8 @@ class CreditRequest implements CreditRequestInterface
         $this->config = $scopeConfig;
         $this->lookupFactory = $lookupFactory;
         $this->quoteManagement = $quoteManagement;
+        $this->resultJsonFactory = $resultJsonFactory;
+		$this->resourceInterface = $resourceInterface;
     }
 
     /**
@@ -97,12 +103,24 @@ class CreditRequest implements CreditRequestInterface
      * Update an order with results from credit request
      *
      * @api
-     * @return string Update status
+     * @return \Magento\Framework\Controller\ResultJson
      */
     public function update ()
     {
+        $debug = $this->config->getValue('payment/divido_financing/debug',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
         $content = $this->req->getContent();
+        if ($debug) {
+            $this->logger->addDebug('Divido: Request: ' . $content);
+        }
+
         $data = json_decode($content);
+        if (is_null($data)) {
+            $this->logger->addError('Divido: Bad request, could not parse body: ' . $content);
+            exit('Invalid request body ' . self::VERSION);
+			//return $this->webhookResponse(false, 'invalid json');
+        }
 
         $quoteId = $data->metadata->quote_id;
 
@@ -124,34 +142,43 @@ class CreditRequest implements CreditRequestInterface
         }
 
         if (isset($data->application)) {
+            if ($debug) {
+                $this->logger->addDebug('Divido: update application id');
+            }
             $lookup->setData('application_id', $data->application);
             $lookup->save();
         }
 
         $order = $this->order->loadByAttribute('quote_id', $quoteId);
 
-        if (! $order->getId() && in_array($data->status, $this->noGo)) {
+        if (in_array($data->status, $this->noGo)) {
+            if ($debug) {
+                $this->logger->addDebug('Divido: No go: ' . $data->status);
+            }
+
             if ($data->status == self::STATUS_DECLINED) {
                 $lookup->setData('declined', 1);
-            } elseif ($data->status == self::STATUS_CANCELED) {
-                $lookup->setData('canceled', 1);
+                $lookup->save();
             }
-            $lookup->save();
 
             return self::VERSION;
         }
 
-        if ($order->getId() && $data->status == self::STATUS_DECLINED) {
-            $order->addStatusHistoryComment($this->historyMessages[$data->status]);
-            $order->cancel();
-            $order->save();
+        $creationStatus = $this->config->getValue('payment/divido_financing/creation_status',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
-            $lookup->setData('declined', 1);
-            $lookup->save();
+        if (! $order->getId() && $data->status != $creationStatus) {
+            if ($debug) {
+                $this->logger->addDebug('Divido: No order, not creation status: ' . $data->status);
+            }
             return self::VERSION;
         }
 
-        if (! $order->getId()) {
+        if (! $order->getId() && $data->status == $creationStatus) {
+            if ($debug) {
+                $this->logger->addDebug('Divido: Create order');
+            }
+
             $quote = $this->quote->loadActive($quoteId);
             if (! $quote->getCustomerId()) {
                 $quote->setCheckoutMethod(\Magento\Quote\Model\QuoteManagement::METHOD_GUEST);
@@ -159,16 +186,17 @@ class CreditRequest implements CreditRequestInterface
             }
 
             $orderId = $this->quoteManagement->placeOrder($quoteId);
-
             $order = $this->order->load($orderId);
-        } else {
-            $orderId = $order->getId();
-        }
-
-        $lookup->setData('order_id', $orderId);
+        } 
+        
+        $lookup->setData('order_id', $order->getId());
         $lookup->save();
 
         if ($data->status == self::STATUS_SIGNED) {
+            if ($debug) {
+                $this->logger->addDebug('Divido: Escalate order');
+            }
+
             $status = self::NEW_ORDER_STATUS;
             $status_override = $this->config->getValue('payment/divido_financing/order_status',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
@@ -188,4 +216,22 @@ class CreditRequest implements CreditRequestInterface
 
         return self::VERSION;
     }
+
+    private function webhookResponse ($ok = true, $message = '')
+    {
+		$pluginVersion = $this->resourceInterface->getDbVersion('Divido_DividoFinancing');
+ 		$status = $ok ? 'ok' : 'error';
+		$response = array(
+			'status'           => $status,
+			'message'          => $message,
+			'platform'         => 'Magento',
+			'plugin_version'   => $pluginVersion,
+		);
+
+        xdebug_Break();
+        $result = $this->resultJsonFactory->create();
+        $result->setData([['error' => 'WHAT']]);
+        return $result; 
+    }
+
 }
