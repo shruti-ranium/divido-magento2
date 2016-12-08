@@ -366,7 +366,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function autoFulfill ($order)
     { 
-        xdebug_break();
         // Check if it's a divido order
         $lookup = $this->getLookupForOrder($order);
         if (is_null($lookup)) {
