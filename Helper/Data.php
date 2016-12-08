@@ -203,6 +203,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         \Divido::setMerchant($apiKey);
 
+        $secret = $this->config->getValue('payment/divido_financing/secret',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if ($secret) {
+            \Divido::setSharedSecret($secret);
+        }
+
         $quote   = $this->cart->getQuote();
         $shipAddr = $quote->getShippingAddress();
         $country = $shipAddr->getCountryId();
@@ -416,5 +422,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         \Divido::setMerchant($apiKey);
         \Divido_Fulfillment::fulfill($params);
+    }
+
+    public function createSignature ($payload, $secret)
+    {
+        $hmac = hash_hmac('sha256', $payload, $secret, true);
+        $signature = base64_encode($hmac);
+
+        return $signature;
     }
 }

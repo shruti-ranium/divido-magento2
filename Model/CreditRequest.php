@@ -130,6 +130,18 @@ class CreditRequest implements CreditRequestInterface
             exit('Cannot verify request ' . self::VERSION);
         }
 
+        $secret = $this->config->getValue('payment/divido_financing/secret',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if ($secret) {
+            $reqSign = $this->req->getHeader('X-DIVIDO-HMAC-SHA256');
+            $sign = $this->helper->createSignature($content, $secret);
+
+            if ($reqSign !== $sign) {
+                $this->logger->addError('Divido: Bad request, invalid signature. Req: ' . $content);
+                exit('Cannot verify signature ' . self::VERSION);
+            }
+        }
+
         $salt = $lookup->getSalt();
         $hash = $this->helper->hashQuote($salt, $data->metadata->quote_id);
         if ($hash !== $data->metadata->quote_hash) {
@@ -228,7 +240,6 @@ class CreditRequest implements CreditRequestInterface
 			'plugin_version'   => $pluginVersion,
 		);
 
-        xdebug_Break();
         $result = $this->resultJsonFactory->create();
         $result->setData([['error' => 'WHAT']]);
         return $result; 
