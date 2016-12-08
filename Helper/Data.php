@@ -363,4 +363,59 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'deposit_amount' => $lookupModel->getData('deposit_value'),
         ];
     }
+
+    public function autoFulfill ($order)
+    { 
+        xdebug_break();
+        // Check if it's a divido order
+        $lookup = $this->getLookupForOrder($order);
+        if (is_null($lookup)) {
+			return false;
+        }
+
+		// If fulfilment is enabled
+        $autoFulfilment = $this->config->getValue('payment/divido_financing/auto_fulfilment',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $fulfilmentStatus = $this->config->getValue('payment/divido_financing/fulfilment_status',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+		if (! $autoFulfilment || ! $fulfilmentStatus) {
+            return false;
+		}
+
+		$currentStatus  = $order->getData('status');
+		$previousStatus = $order->getOrigData('status');
+
+        if ($currentStatus != $fulfilmentStatus || $currentStatus == $previousStatus) {
+            return false;
+        }
+
+        $trackingNumbers = [];
+        $shippingMethod = $order->getShippingDescription();
+
+        $tracks = $order->getTracksCollection()->toArray();
+        if ($tracks && isset($tracks['items'])) {
+            foreach ($tracks['items'] as $track) {
+                $trackingNumbers[] = "{$track['title']}: {$track['track_number']}";
+            }
+        }
+
+        $trackingNumbers = implode(',', $trackingNumbers);
+        $applicationId = $lookup['application_id'];
+
+        return $this->setFulfilled($applicationId, $shippingMethod, $trackingNumbers);
+    }
+
+    public function setFulfilled ($applicationId, $shippingMethod = null, $trackingNumbers = null)
+    {
+        $apiKey = $this->getApiKey();
+        $params = array(
+            'application'    => $applicationId,
+            'deliveryMethod' => $shippingMethod,
+            'trackingNumber' => $trackingNumbers
+        );
+
+        \Divido::setMerchant($apiKey);
+        \Divido_Fulfillment::fulfill($params);
+    }
 }
