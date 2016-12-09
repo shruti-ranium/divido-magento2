@@ -11,16 +11,16 @@ namespace Divido\DividoFinancing\Model\Adminhtml\Source;
  */
 class PlanSelection implements \Magento\Framework\Option\ArrayInterface
 {
-    public function __construct (
+    public function __construct(
         \Divido\DividoFinancing\Helper\Data $helper,
-        \Psr\Log\LoggerInterface            $logger
-    )
-    {
+        \Psr\Log\LoggerInterface $logger
+    ) {
+    
         $this->helper = $helper;
         $this->logger = $logger;
     }
 
-    public function toOptionArray ()
+    public function toOptionArray()
     {
         $plans = [];
         try {

@@ -3,7 +3,7 @@ define(
         'jquery',
         'Magento_Checkout/js/model/url-builder',
     ],
-    function($, urlBuilder) {
+    function ($, urlBuilder) {
         return function (planId, deposit, email) {
             var creditRequestUrl = '/rest/V1/divido/credit-request/';
 
@@ -20,6 +20,6 @@ define(
                 global: true,
                 contentType: 'application/json'
             });
-		};
+        };
     }
 );

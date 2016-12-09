@@ -9,7 +9,7 @@ use Magento\Framework\Db\Ddl\Table;
 
 class InstallSchema implements InstallSchemaInterface
 {
-    public function install (SchemaSetupInterface $setup, ModuleContextInterface $context)
+    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $installer = $setup;
         $installer->startSetup();
@@ -24,7 +24,7 @@ class InstallSchema implements InstallSchemaInterface
         $installer->endSetup();
     }
 
-    public function createDividoTable (SchemaSetupInterface $installer, $tableName)
+    public function createDividoTable(SchemaSetupInterface $installer, $tableName)
     {
 
         $table = $installer->getConnection()

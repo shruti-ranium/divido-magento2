@@ -36,7 +36,7 @@ define(
                 };
             }
 
-            return storage.put( serviceUrl, JSON.stringify(payload));
+            return storage.put(serviceUrl, JSON.stringify(payload));
         };
     }
 );

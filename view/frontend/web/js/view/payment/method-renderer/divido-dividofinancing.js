@@ -1,8 +1,8 @@
 define(
     [
-		'jquery',
+        'jquery',
         'Magento_Checkout/js/view/payment/default',
-		'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/model/quote',
         'Divido_DividoFinancing/js/action/set-payment-method',
         'Divido_DividoFinancing/js/model/credit-request',
         'Magento_Checkout/js/model/error-processor',
@@ -41,14 +41,14 @@ define(
                 }
             },
 
-			getTransactionResults: function() {
-				return _.map(window.checkoutConfig.payment.divido_financing.transactionResults, function(value, key) {
-					return {
-						'value':              key,
-						'transaction_result': value
-					}
-				});
-			},
+            getTransactionResults: function () {
+                return _.map(window.checkoutConfig.payment.divido_financing.transactionResults, function (value, key) {
+                    return {
+                        'value':              key,
+                        'transaction_result': value
+                    }
+                });
+            },
 
             continueToDivido: function () {
                 fullScreenLoader.startLoader();
@@ -72,8 +72,7 @@ define(
                     .fail(function (response) {
                         errorProcessor.process(response, this.messageContainer);
                         fullScreenLoader.stopLoader();
-                    }
-                );
+                    });
             }
         });
     }

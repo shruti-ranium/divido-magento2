@@ -10,15 +10,14 @@ final class ConfigProvider implements ConfigProviderInterface
 {
     const CODE = 'divido_financing';
 
-    private
-        $cart,
+    private $cart,
         $helper;
 
-    public function __construct (
+    public function __construct(
         \Magento\Checkout\Model\Cart $cart,
         \Divido\DividoFinancing\Helper\Data $helper
-    )
-    {
+    ) {
+    
         $this->helper = $helper;
         $this->cart  = $cart;
     }

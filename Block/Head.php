@@ -6,17 +6,17 @@ class Head extends \Magento\Framework\View\Element\Template
 {
     private $helper;
 
-    public function __construct (
+    public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Divido\DividoFinancing\Helper\Data $helper
-    )
-    {
+    ) {
+    
         $this->helper = $helper;
         parent::__construct($context);
     }
 
 
-	public function getScriptUrl ()
+    public function getScriptUrl()
     {
         return $this->helper->getScriptUrl();
     }

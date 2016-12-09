@@ -6,19 +6,19 @@ class Success extends \Magento\Framework\App\Action\Action
 {
     private $checkoutSession, $order;
 
-    public function __construct (
+    public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Sales\Model\Order $order
-    ) 
-    {
+    ) {
+    
         $this->checkoutSession = $checkoutSession;
         $this->order = $order;
 
         parent::__construct($context);
     }
 
-    public function execute ()
+    public function execute()
     {
         $quoteId = $this->getRequest()->getParam('quote_id');
         $order   = $this->order->loadByAttribute('quote_id', $quoteId);

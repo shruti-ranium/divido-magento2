@@ -15,8 +15,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const REDIRECT_PATH    = 'divido/financing/success/';
     const CHECKOUT_PATH    = 'checkout/';
 
-    private
-        $config,
+    private $config,
         $logger,
         $cache,
         $cart,
@@ -35,8 +34,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resource,
         LookupFactory $lookupFactory,
         UrlInterface $urlBuilder
-    )
-    {
+    ) {
+    
         $this->config        = $scopeConfig;
         $this->logger        = $logger;
         $this->cache         = $cache;
@@ -47,7 +46,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->urlBuilder    = $urlBuilder;
     }
 
-    public function getConnection ()
+    public function getConnection()
     {
         if (! $this->connection) {
             $this->connection = $this->resource->getConnection('core_write');
@@ -56,12 +55,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->connection;
     }
 
-    public function cleanCache ()
+    public function cleanCache()
     {
         $this->cache->clean('matchingTag', [self::CACHE_DIVIDO_TAG]);
     }
 
-    public function getAllPlans ()
+    public function getAllPlans()
     {
         $apiKey = $this->config->getValue('payment/divido_financing/api_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         if (empty($apiKey)) {
@@ -86,22 +85,28 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         $plans = $response->finances;
 
-        $this->cache->save(serialize($plans), 
-            self::CACHE_PLANS_KEY, 
-            [self::CACHE_DIVIDO_TAG], 
-            self::CACHE_PLANS_TTL);
+        $this->cache->save(
+            serialize($plans),
+            self::CACHE_PLANS_KEY,
+            [self::CACHE_DIVIDO_TAG],
+            self::CACHE_PLANS_TTL
+        );
         
         return $plans;
     }
 
-    public function getGlobalSelectedPlans ()
+    public function getGlobalSelectedPlans()
     {
-        $plansDisplayed = $this->config->getValue('payment/divido_financing/plans_displayed',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $plansDisplayed = $this->config->getValue(
+            'payment/divido_financing/plans_displayed',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         $plansDisplayed = $plansDisplayed ?: 'plans_all';
 
-        $plansSelection = $this->config->getValue('payment/divido_financing/plan_selection',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $plansSelection = $this->config->getValue(
+            'payment/divido_financing/plan_selection',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         $plansSelection = $plansSelection ? explode(',', $plansSelection) : [];
 
         $plans = $this->getAllPlans();
@@ -117,7 +122,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
-    public function getQuotePlans ($quote)
+    public function getQuotePlans($quote)
     {
         if (!$quote) {
             return false;
@@ -145,17 +150,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
-    public function getLocalPlans ($productId)
+    public function getLocalPlans($productId)
     {
-		$isActive = $this->config->getValue('payment/divido_financing/active',
-			\Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-		if (! $isActive) {
-			return[];
-		}
+        $isActive = $this->config->getValue(
+            'payment/divido_financing/active',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        if (! $isActive) {
+            return[];
+        }
 
         $dbConn  = $this->getConnection();
-        $tblCpev = $this->resource->getTableName('catalog_product_entity_varchar'); 
-        $tblEava = $this->resource->getTableName('eav_attribute'); 
+        $tblCpev = $this->resource->getTableName('catalog_product_entity_varchar');
+        $tblEava = $this->resource->getTableName('eav_attribute');
         
         $sqlTpl = "
             select cpev.value 
@@ -168,8 +175,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $sqlDisplay = sprintf($sqlTpl, $tblCpev, $tblEava, 'divido_plans_display', $productId);
         $sqlPlans   = sprintf($sqlTpl, $tblCpev, $tblEava, 'divido_plans_list', $productId);
 
-        $globalProdSelection = $this->config->getValue('payment/divido_financing/product_selection',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $globalProdSelection = $this->config->getValue(
+            'payment/divido_financing/product_selection',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
 
         $display = $dbConn->fetchRow($sqlDisplay);
         if ($display) {
@@ -196,15 +205,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
-    public function creditRequest ($planId, $depositPercentage, $email)
+    public function creditRequest($planId, $depositPercentage, $email)
     {
         ini_set('html_errors', 0);
         $apiKey = $this->getApiKey();
 
         \Divido::setMerchant($apiKey);
 
-        $secret = $this->config->getValue('payment/divido_financing/secret',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $secret = $this->config->getValue(
+            'payment/divido_financing/secret',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         if ($secret) {
             \Divido::setSharedSecret($secret);
         }
@@ -273,8 +284,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         $response_url = $this->urlBuilder->getBaseUrl() . self::CALLBACK_PATH;
         $checkout_url = $this->urlBuilder->getUrl(self::CHECKOUT_PATH);
-        $redirect_url = $this->urlBuilder->getUrl(self::REDIRECT_PATH, 
-            ['quote_id' => $quoteId]);
+        $redirect_url = $this->urlBuilder->getUrl(
+            self::REDIRECT_PATH,
+            ['quote_id' => $quoteId]
+        );
 
         $requestData = [
             'merchant' => $apiKey,
@@ -314,19 +327,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
-    public function hashQuote ($salt, $quoteId)
+    public function hashQuote($salt, $quoteId)
     {
         return hash('sha256', $salt.$quoteId);
     }
 
-    public function getApiKey ()
+    public function getApiKey()
     {
         $apiKey = $this->config->getValue('payment/divido_financing/api_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         return $apiKey;
     }
 
-    public function getScriptUrl ()
+    public function getScriptUrl()
     {
         $apiKey = $this->getApiKey();
     
@@ -342,7 +355,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return "//cdn.divido.com/calculator/{$jsKey}.js";
     }
 
-    public function plans2list ($plans)
+    public function plans2list($plans)
     {
         $plansBare = array_map(function ($plan) {
             return $plan->id;
@@ -353,7 +366,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return implode(',', $plansBare);
     }
 
-    public function getLookupForOrder ($order)
+    public function getLookupForOrder($order)
     {
         $quoteId = $order->getQuoteId();
 
@@ -370,26 +383,30 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ];
     }
 
-    public function autoFulfill ($order)
-    { 
+    public function autoFulfill($order)
+    {
         // Check if it's a divido order
         $lookup = $this->getLookupForOrder($order);
         if (is_null($lookup)) {
-			return false;
+            return false;
         }
 
-		// If fulfilment is enabled
-        $autoFulfilment = $this->config->getValue('payment/divido_financing/auto_fulfilment',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $fulfilmentStatus = $this->config->getValue('payment/divido_financing/fulfilment_status',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        // If fulfilment is enabled
+        $autoFulfilment = $this->config->getValue(
+            'payment/divido_financing/auto_fulfilment',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $fulfilmentStatus = $this->config->getValue(
+            'payment/divido_financing/fulfilment_status',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
 
-		if (! $autoFulfilment || ! $fulfilmentStatus) {
+        if (! $autoFulfilment || ! $fulfilmentStatus) {
             return false;
-		}
+        }
 
-		$currentStatus  = $order->getData('status');
-		$previousStatus = $order->getOrigData('status');
+        $currentStatus  = $order->getData('status');
+        $previousStatus = $order->getOrigData('status');
 
         if ($currentStatus != $fulfilmentStatus || $currentStatus == $previousStatus) {
             return false;
@@ -411,20 +428,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->setFulfilled($applicationId, $shippingMethod, $trackingNumbers);
     }
 
-    public function setFulfilled ($applicationId, $shippingMethod = null, $trackingNumbers = null)
+    public function setFulfilled($applicationId, $shippingMethod = null, $trackingNumbers = null)
     {
         $apiKey = $this->getApiKey();
-        $params = array(
+        $params = [
             'application'    => $applicationId,
             'deliveryMethod' => $shippingMethod,
             'trackingNumber' => $trackingNumbers
-        );
+        ];
 
         \Divido::setMerchant($apiKey);
         \Divido_Fulfillment::fulfill($params);
     }
 
-    public function createSignature ($payload, $secret)
+    public function createSignature($payload, $secret)
     {
         $hmac = hash_hmac('sha256', $payload, $secret, true);
         $signature = base64_encode($hmac);

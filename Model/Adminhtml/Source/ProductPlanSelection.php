@@ -11,16 +11,16 @@ namespace Divido\DividoFinancing\Model\Adminhtml\Source;
  */
 class ProductPlanSelection extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
 {
-    public function __construct (
+    public function __construct(
         \Divido\DividoFinancing\Helper\Data $helper,
-        \Psr\Log\LoggerInterface            $logger
-    )
-    {
+        \Psr\Log\LoggerInterface $logger
+    ) {
+    
         $this->helper = $helper;
         $this->logger = $logger;
     }
 
-    public function getAllOptions ()
+    public function getAllOptions()
     {
         $plans = [];
         try {

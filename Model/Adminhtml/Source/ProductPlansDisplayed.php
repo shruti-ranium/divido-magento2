@@ -11,7 +11,7 @@ namespace Divido\DividoFinancing\Model\Adminhtml\Source;
  */
 class ProductPlansDisplayed extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
 {
-    public function getAllOptions ()
+    public function getAllOptions()
     {
         return [
             [

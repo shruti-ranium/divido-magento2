@@ -11,7 +11,7 @@ namespace Divido\DividoFinancing\Model\Adminhtml\Source;
  */
 class PlansDisplayed implements \Magento\Framework\Option\ArrayInterface
 {
-    public function toOptionArray ()
+    public function toOptionArray()
     {
         return [
             [

@@ -25,7 +25,7 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
-    public function __construct (
+    public function __construct(
         \Divido\DividoFinancing\Helper\Data $dividoHelper,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
@@ -58,13 +58,15 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
         $this->dividoHelper = $dividoHelper;
     }
 
-    public function isAvailable (\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         if (! is_null($quote)) {
-            $cartThreshhold = $this->_scopeConfig->getValue('payment/divido_financing/cart_threshold',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+            $cartThreshhold = $this->_scopeConfig->getValue(
+                'payment/divido_financing/cart_threshold',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            );
 
-            if (is_numeric($cartThreshhold)  && $quote->getBaseGrandTotal() < $cartThreshhold) {
+            if (is_numeric($cartThreshhold) && $quote->getBaseGrandTotal() < $cartThreshhold) {
                 return false;
             }
 
@@ -77,12 +79,12 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
         return parent::isAvailable($quote);
     }
 
-    public function canUseForCurrency ($currencyCode)
+    public function canUseForCurrency($currencyCode)
     {
         return $currencyCode === 'GBP';
     }
 
-    public function canUseForCountry ($country) 
+    public function canUseForCountry($country)
     {
         $parentOk = parent::canUseForCountry($country);
         if (! $parentOk) {
@@ -91,5 +93,4 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 
         return $country === 'GB';
     }
-
 }

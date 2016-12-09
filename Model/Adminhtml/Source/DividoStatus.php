@@ -17,7 +17,7 @@ class DividoStatus implements \Magento\Framework\Option\ArrayInterface
 
 
 
-    public function toOptionArray ()
+    public function toOptionArray()
     {
         return [
             [

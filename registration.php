@@ -7,5 +7,3 @@
 use \Magento\Framework\Component\ComponentRegistrar;
 
 ComponentRegistrar::register(ComponentRegistrar::MODULE, 'Divido_DividoFinancing', __DIR__);
-
-
