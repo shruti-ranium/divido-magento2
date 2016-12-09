@@ -36,16 +36,16 @@ class CreditRequest implements CreditRequestInterface
         self::STATUS_DECLINED,
     ];
 
-    private $req,
-        $quote,
-        $order,
-        $helper,
-        $logger,
-        $config,
-        $lookupFactory,
-        $quoteManagement,
-        $resourceInterface,
-        $resultJsonFactory;
+    private $req;
+    private $quote;
+    private $order;
+    private $helper;
+    private $logger;
+    private $config;
+    private $lookupFactory;
+    private $quoteManagement;
+    private $resourceInterface;
+    private $resultJsonFactory;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -90,7 +90,7 @@ class CreditRequest implements CreditRequestInterface
         try {
             $creditRequestUrl = $this->helper->creditRequest($planId, $deposit, $email);
             $response['url']  = $creditRequestUrl;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->addError($e);
             $response['error'] = $e->getMessage();
         }
@@ -246,11 +246,12 @@ class CreditRequest implements CreditRequestInterface
             'plugin_version'   => $pluginVersion,
         ];
 
-        // TODO: Fix proper json return
-        return json_encode($response);
-
+        /* Fix proper JSON return
         $result = $this->resultJsonFactory->create();
         $result->setData($response);
         return $result;
+         */
+
+        return json_encode($response);
     }
 }

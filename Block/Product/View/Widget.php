@@ -4,8 +4,8 @@ namespace Divido\DividoFinancing\Block\Product\View;
 
 class Widget extends \Magento\Catalog\Block\Product\AbstractProduct
 {
-    private $helper,
-        $catHelper;
+    private $helper;
+    private $catHelper;
 
     public function __construct(
         \Divido\DividoFinancing\Helper\Data $helper,

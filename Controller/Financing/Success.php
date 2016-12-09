@@ -4,7 +4,8 @@ namespace Divido\DividoFinancing\Controller\Financing;
 
 class Success extends \Magento\Framework\App\Action\Action
 {
-    private $checkoutSession, $order;
+    private $checkoutSession;
+    private $order;
 
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

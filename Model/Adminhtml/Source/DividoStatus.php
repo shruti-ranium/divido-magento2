@@ -15,8 +15,6 @@ class DividoStatus implements \Magento\Framework\Option\ArrayInterface
         STATUS_ACCEPTED = 'ACCEPTED',
         STATUS_SIGNED   = 'SIGNED';
 
-
-
     public function toOptionArray()
     {
         return [

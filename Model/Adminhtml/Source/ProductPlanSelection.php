@@ -25,7 +25,7 @@ class ProductPlanSelection extends \Magento\Eav\Model\Entity\Attribute\Source\Ab
         $plans = [];
         try {
             $plans = $this->helper->getAllPlans();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->addError($e);
         }
 

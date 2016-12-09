@@ -15,15 +15,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const REDIRECT_PATH    = 'divido/financing/success/';
     const CHECKOUT_PATH    = 'checkout/';
 
-    private $config,
-        $logger,
-        $cache,
-        $cart,
-        $storeManager,
-        $lookupFactory,
-        $resource,
-        $connection,
-        $urlBuilder;
+    private $config;
+    private $logger;
+    private $cache;
+    private $cart;
+    private $storeManager;
+    private $lookupFactory;
+    private $resource;
+    private $connection;
+    private $urlBuilder;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -62,7 +62,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getAllPlans()
     {
-        $apiKey = $this->config->getValue('payment/divido_financing/api_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $apiKey = $this->config->getValue(
+            'payment/divido_financing/api_key',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         if (empty($apiKey)) {
             $this->cleanCache();
             return [];
@@ -191,7 +194,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $productPlans = empty($productPlans) ? [] : explode(',', $productPlans);
         }
 
-        if (!$display || $display == 'product_plans_default' || (empty($productPlans) && $globalProdSelection != 'products_selected')) {
+        if (
+            !$display 
+            || $display == 'product_plans_default' 
+            || (empty($productPlans) 
+            && $globalProdSelection != 'products_selected')) 
+        {
             return $this->getGlobalSelectedPlans();
         }
 
@@ -207,7 +215,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function creditRequest($planId, $depositPercentage, $email)
     {
-        ini_set('html_errors', 0);
         $apiKey = $this->getApiKey();
 
         \Divido::setMerchant($apiKey);
@@ -322,7 +329,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             return $response->url;
         } else {
             if ($response->status === 'error') {
-                throw new \Exception($response->error);
+                throw new \Magento\Framework\Exception\LocalizedException($response->error);
             }
         }
     }
@@ -334,7 +341,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getApiKey()
     {
-        $apiKey = $this->config->getValue('payment/divido_financing/api_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $apiKey = $this->config->getValue(
+            'payment/divido_financing/api_key',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
 
         return $apiKey;
     }
@@ -387,7 +397,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         // Check if it's a divido order
         $lookup = $this->getLookupForOrder($order);
-        if (is_null($lookup)) {
+        if ($lookup === null) {
             return false;
         }
 

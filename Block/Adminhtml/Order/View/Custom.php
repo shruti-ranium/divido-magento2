@@ -3,7 +3,8 @@ namespace Divido\DividoFinancing\Block\Adminhtml\Order\View;
 
 class Custom extends \Magento\Backend\Block\Template
 {
-    private $helper, $_coreRegistry;
+    private $helper;
+    private $coreRegistry;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -13,13 +14,13 @@ class Custom extends \Magento\Backend\Block\Template
     ) {
     
         $this->helper = $helper;
-        $this->_coreRegistry = $registry;
+        $this->coreRegistry = $registry;
         parent::__construct($context, $data);
     }
 
     public function getOrder()
     {
-        return $this->_coreRegistry->registry('current_order');
+        return $this->coreRegistry->registry('current_order');
     }
 
     public function getDividoInfo()

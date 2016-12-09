@@ -6,8 +6,8 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 {
     const METHOD_CODE = 'divido_financing';
 
-    protected $_code = self::METHOD_CODE;
-    protected $_isOffline = true;
+    private $_code = self::METHOD_CODE;
+    private $_isOffline = true;
 
     private $dividoHelper;
 
@@ -60,7 +60,7 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 
     public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
-        if (! is_null($quote)) {
+        if ($quote !== null) {
             $cartThreshhold = $this->_scopeConfig->getValue(
                 'payment/divido_financing/cart_threshold',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
