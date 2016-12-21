@@ -7,9 +7,10 @@
         "OSL-3.0"
     ],
     "autoload": {
-        "files": [
-            "registration.php"
-        ]
+        "files": [ "registration.php" ],
+        "psr-4": {
+            "Divido\\DividoFinancing\\": ""
+        }
     },
     "require": {
         "divido/divido-php": ">=1.1.1"
