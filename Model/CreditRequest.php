@@ -246,12 +246,6 @@ class CreditRequest implements CreditRequestInterface
             'plugin_version'   => $pluginVersion,
         ];
 
-        /* Fix proper JSON return
-        $result = $this->resultJsonFactory->create();
-        $result->setData($response);
-        return $result;
-         */
-
         return json_encode($response);
     }
 }
