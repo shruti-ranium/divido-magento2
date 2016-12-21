@@ -13,5 +13,5 @@
     },
     "require": {
         "divido/divido-php": ">=1.1.1"
-    },
+    }
 }
