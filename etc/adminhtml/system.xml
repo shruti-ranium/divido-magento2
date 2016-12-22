@@ -10,7 +10,7 @@
         <section id="payment">
             <group id="divido_financing" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Divido Financing</label>
-                <comment><![CDATA[Divido description]]></comment>
+                <comment><![CDATA[Offer customers to pay in instalments with Divido]]></comment>
                 <field id="api_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>API-key</label>
                 </field>
@@ -43,6 +43,9 @@
                 <field id="fulfilment_status" translate="label" type="select" sortOrder="53" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Fulfilment status</label>
 				    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <depends>
+                        <field id="auto_fulfilment">1</field>
+                    </depends>
                 </field>
 
                 <field id="cart_threshold" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
