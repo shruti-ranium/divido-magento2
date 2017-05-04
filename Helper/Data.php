@@ -4,6 +4,7 @@ namespace Divido\DividoFinancing\Helper;
 
 use \Divido\DividoFinancing\Model\LookupFactory;
 use Magento\Framework\UrlInterface;
+use Magento\Catalog\Model\ProductFactory;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -21,6 +22,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     private $cart;
     private $storeManager;
     private $lookupFactory;
+    private $productFactory;
     private $resource;
     private $connection;
     private $urlBuilder;
@@ -33,7 +35,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\ResourceConnection $resource,
         LookupFactory $lookupFactory,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        ProductFactory $productFactory
     ) {
     
         $this->config        = $scopeConfig;
@@ -44,6 +47,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->resource      = $resource;
         $this->lookupFactory = $lookupFactory;
         $this->urlBuilder    = $urlBuilder;
+        $this->productFactory = $productFactory;
     }
 
     public function getConnection()
@@ -166,33 +170,28 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $dbConn  = $this->getConnection();
         $tblCpev = $this->resource->getTableName('catalog_product_entity_varchar');
         $tblEava = $this->resource->getTableName('eav_attribute');
-        
-        $sqlTpl = "
-            select cpev.value 
-            from %s cpev 
-                join %s eava 
-                on eava.attribute_id = cpev.attribute_id 
-            where eava.attribute_code = '%s' 
-            and cpev.entity_id = %s";
 
-        $sqlDisplay = sprintf($sqlTpl, $tblCpev, $tblEava, 'divido_plans_display', $productId);
-        $sqlPlans   = sprintf($sqlTpl, $tblCpev, $tblEava, 'divido_plans_list', $productId);
+        $product = $this->productFactory->create()->load($productId);
+
+        $display = null;
+        $dispAttr = $product->getResource()->getAttribute('divido_plans_display');
+        if ($dispAttr) {
+            $dispAttrCode = $dispAttr->getAttributeCode();
+            $display  = $product->getData($dispAttrCode);
+        }
+
+        $productPlans = null;
+        $listAttr = $product->getResource()->getAttribute('divido_plans_list');
+        if ($listAttr) {
+            $listAttrCode = $listAttr->getAttributeCode();
+            $productPlans = $product->getData($listAttrCode);
+            $productPlans = explode(',', $productPlans);
+        }
 
         $globalProdSelection = $this->config->getValue(
             'payment/divido_financing/product_selection',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
-
-        $display = $dbConn->fetchRow($sqlDisplay);
-        if ($display) {
-            $display = $display['value'];
-        }
-
-        $productPlans = $dbConn->fetchRow($sqlPlans);
-        if ($productPlans) {
-            $productPlans = $productPlans['value'];
-            $productPlans = empty($productPlans) ? [] : explode(',', $productPlans);
-        }
 
         if (
             !$display 
