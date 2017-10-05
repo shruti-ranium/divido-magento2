@@ -226,12 +226,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             \Divido::setSharedSecret($secret);
         }
 
-        $quote   = $this->cart->getQuote();
+        $quote = $this->cart->getQuote();
         $shipAddr = $quote->getShippingAddress();
         $country = $shipAddr->getCountryId();
 
-        $quote->setCustomerEmail($email);
-        $quote->save();
+        if (!empty($email)) {
+            if (!$quote->getCustomerEmail()) {
+                $quote->setCustomerEmail($email);
+                $quote->save();
+            }
+        } else {
+            if ($existingEmail = $quote->getCustomerEmail()) {
+                $email = $existingEmail;
+            }
+        }
 
         $language = 'EN';
 
@@ -256,7 +264,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'type'     => 'product',
                 'text'     => $item->getName(),
                 'quantity' => $item->getQty(),
-                'value'    => $item->getPrice(),
+                'value'    => $item->getPriceInclTax(),
             ];
         }
 
