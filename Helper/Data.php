@@ -264,7 +264,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'type'     => 'product',
                 'text'     => $item->getName(),
                 'quantity' => $item->getQty(),
-                'value'    => $item->getPrice(),
+                'value'    => $item->getPriceInclTax(),
             ];
         }
 
