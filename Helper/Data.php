@@ -230,6 +230,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $shipAddr = $quote->getShippingAddress();
         $country = $shipAddr->getCountryId();
 
+        if(empty($country)){
+            $shipAddr = $quote->getBillingAddress();
+            $country = $shipAddr->getCountry();
+        }
+        
         if (!empty($email)) {
             if (!$quote->getCustomerEmail()) {
                 $quote->setCustomerEmail($email);
