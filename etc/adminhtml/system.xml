@@ -49,7 +49,7 @@
                 </field>
 
                 <field id="cart_threshold" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Cart threshold</label>
+                    <label>Minimum Cart Amount</label>
                 </field>
 
                 <field id="product_selection" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
