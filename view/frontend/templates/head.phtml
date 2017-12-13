@@ -3,4 +3,7 @@
  * @var $block \Divido\DividoFinancing\Block\Head 
  */
 ?>
+<script> 
+    var dividoKey = "<?php echo $block->getDividoKey(); ?>";
+</script>
 <script type="text/javascript" src="<?php echo $block->getScriptUrl(); ?>"></script>

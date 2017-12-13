@@ -34,70 +34,7 @@
 
         <div class="field required">
             <div class="control">
-
-                <div id="divido-checkout" 
-                     data-divido-calculator 
-                     data-bind="
-                        mageInit: {
-                            'dividocalculator':{}
-                        },
-                        attr: {
-                            'data-divido-amount': window.checkoutConfig.totalsData.base_grand_total,
-                            'data-divido-plans': window.checkoutConfig.payment.divido_financing.cart_plans
-                        }
-                     " 
-                     class="divido-calculator">
-
-                    <div class="divido-element divido-headline">
-                        <a href="https://www.divido.com" target="_blank" class="divido-logo divido-logo-sm" style="float:right;">Divido</a>
-                        Pay in instalments
-                    </div>
-
-                    <div class="divido-element divido-plans">
-                        <span data-divido-choose-finance data-divido-label="Choose your plan" data-divido-form="divido_finance">
-                        </span>
-                    </div>
-
-                    <div class="divido-element divido-deposit">
-                        <span class="divido-deposit" data-divido-choose-deposit data-divido-label="Choose your deposit" data-divido-form="divido_deposit">
-                        </span>
-                    </div>
-
-                    <div class="divido-element divido-description">
-                        <strong>
-                            <span data-divido-agreement-duration></span> monthly payments of <span data-divido-monthly-instalment></span>
-                        </strong>
-                    </div>
-                    <div class="divido-element divido-info">
-                        <div class="divido-table">
-                            <div class="divido-row">
-                                <div class="divido-cell divido-cell-head">Term</div>
-                                <div class="divido-cell"><span data-divido-agreement-duration></span> months</div>
-                            </div>
-                            <div class="divido-row">
-                                <div class="divido-cell divido-cell-head">Monthly instalment</div>
-                                <div class="divido-cell"><span data-divido-monthly-instalment></span></div>
-                            </div>
-                            <div class="divido-row">
-                                <div class="divido-cell divido-cell-head">Deposit</div>
-                                <div class="divido-cell"><span data-divido-deposit></span></div>
-                            </div>
-                            <div class="divido-row">
-                                <div class="divido-cell divido-cell-head">Cost of credit</div>
-                                <div class="divido-cell"><span data-divido-finance-cost-rounded></span></div>
-                            </div>
-                            <div class="divido-row">
-                                <div class="divido-cell divido-cell-head">Total payable</div>
-                                <div class="divido-cell"><span data-divido-total-payable-rounded></span></div>
-                            </div>
-                            <div class="divido-row">
-                                <div class="divido-cell divido-cell-head">Total interest APR</div>
-                                <div class="divido-cell"><span data-divido-interest-rate></span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <p><em>You will be redirected to Divido to complete this finance application when you submit this form</em></p>
-                </div>
+                <div data-divido-widget data-divido-plans="<?php echo $this->getQuotePlans(); ?>" data-divido-amount="<?php echo $this->getGrandTotal(); ?>"  ><div>
             </div>
         </div>
 
