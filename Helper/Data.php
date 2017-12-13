@@ -374,7 +374,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function getDividoKey()
-    {
+    { 
         $apiKey = $this->getApiKey();
         
             if (empty($apiKey)) {
@@ -385,7 +385,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $relevantPart = array_shift($keyParts);
     
             $jsKey = strtolower($relevantPart);
-
+            
             return $jsKey;
     }
 

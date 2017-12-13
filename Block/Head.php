@@ -19,4 +19,9 @@ class Head extends \Magento\Framework\View\Element\Template
     {
         return $this->helper->getScriptUrl();
     }
+
+    public function getDividoKey()
+    {
+        return $this->helper->getDividoKey();
+    }
 }
