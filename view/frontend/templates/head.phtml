@@ -7,3 +7,23 @@
     var dividoKey = "<?php echo $block->getDividoKey(); ?>";
 </script>
 <script type="text/javascript" src="<?php echo $block->getScriptUrl(); ?>"></script>
+<script>// <![CDATA[
+function waitForElementToDisplay(selector, time) {
+        if(document.querySelector(selector)!=null) {
+            TemplateCalculator.reload();
+            return;
+        }
+        else {
+            setTimeout(function() {
+                waitForElementToDisplay(selector, time);
+            }, time);
+        }
+    }
+        require([
+            'jquery',
+            'domReady!'
+        ], function ($) {
+            waitForElementToDisplay('#dividoWidget', 1000); 
+        });
+        // ]]>
+</script>
