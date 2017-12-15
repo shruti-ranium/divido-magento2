@@ -488,19 +488,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getAddressDetail($addressObject)
     {
-
-        $addressStreet   = $this->is_set($addressObject['street']);
-        $addressPostcode = $this->is_set($addressObject['postcode']);
-        $addressCity     = $this->is_set($addressObject['city']);
-        $addressText     = implode(' ' , array($addressStreet,$addressCity,$addressPostcode));
-
+        $addressText     = implode(' ' , array($addressObject['street'],$addressObject['city'],$addressObject['postcode']));
         $addressArray = array(
-            'postcode'          => $addressPostcode,
-            'street'            => $addressStreet,
+            'postcode'          => $addressObject['postcode'],
+            'street'            => $addressObject['street'],
             'flat'              => '',
             'buildingNumber'    => '',
             'buildingName'      => '',
-            'town'              => $addressCity,
+            'town'              => $addressObject['city'],
             'flat'              => '',
             'text'              => $addressText,            
         );
@@ -508,14 +503,4 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $addressArray;
     }
 
-    /**
-     * If its set returns value otherwise returns blank
-     *
-     * @param  string|int|null $item
-     * @return string|int|null
-     */
-    public function is_set($item)
-    {
-        return isset($item) ? $item : '';
-    }
 }
