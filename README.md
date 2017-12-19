@@ -37,6 +37,6 @@ That should be it to get going with Divido as a checkout option.
 | New order status | What status a new order created through Divido will have |
 | Automatic fulfilment | Notify Divido and the lender that an order has been fulfilled |
 | Fulfilment status | Set the status at which an order is considered fulfilled |
-| Cart threshold | Under this amount, Divido is not available as a checkout option |
+| Minimum cart amount | Under this amount, Divido is not available as a checkout option |
 | Product selection | Decide what products are available on finance |
 | Displayed plans | Decide what plans are globally available |
