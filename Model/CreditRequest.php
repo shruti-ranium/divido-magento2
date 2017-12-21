@@ -86,9 +86,10 @@ class CreditRequest implements CreditRequestInterface
         $planId  = $this->req->getQuery('plan', null);
         $deposit = $this->req->getQuery('deposit', null);
         $email   = $this->req->getQuery('email', null);
-
+        $cartValue   = $this->req->getQuery('initial_cart_value', null);
+        
         try {
-            $creditRequestUrl = $this->helper->creditRequest($planId, $deposit, $email);
+            $creditRequestUrl = $this->helper->creditRequest($planId, $deposit, $email, $cartValue);
             $response['url']  = $creditRequestUrl;
         } catch (\Exception $e) {
             $this->logger->addError($e);
@@ -185,20 +186,39 @@ class CreditRequest implements CreditRequestInterface
 
         if (! $order->getId() && $data->status != $creationStatus) {
             if ($debug) {
-                $this->logger->addDebug('Divido: No order, not creation status: ' . $data->status);
+                $this->logger->debug('Divido: No order, not creation status: ' . $data->status);
             }
             return $this->webhookResponse();
         }
 
         if (! $order->getId() && $data->status == $creationStatus) {
             if ($debug) {
-                $this->logger->addDebug('Divido: Create order');
+                $this->logger->debug('Divido: Create order');
             }
 
             $quote = $this->quote->loadActive($quoteId);
             if (! $quote->getCustomerId()) {
                 $quote->setCheckoutMethod(\Magento\Quote\Model\QuoteManagement::METHOD_GUEST);
                 $quote->save();
+            }
+
+            $totals = $quote->getTotals();    
+            $grandTotal = (string) $totals['grand_total']->getValue();
+            $iv=(string ) $lookup->getData('initial_cart_value');
+
+            //If cart value is different do not place order
+            if ($debug) {    
+            $this->logger->warning('Current Cart Value : ' . $grandTotal);
+            $this->logger->warning('Divido Inital Value: ' . $iv);
+            }
+
+            if($grandTotal != $iv){
+                $this->logger->warning('Cancel Order - Cart value changed: ');
+                //Cancel the order here
+                $lookup->setData('canceled', 1);
+                $lookup->save();
+                $this->helper->cancelApplication($quoteId);
+                return $this->webhookResponse(false, 'Cart value changed');
             }
 
             $orderId = $this->quoteManagement->placeOrder($quoteId);
