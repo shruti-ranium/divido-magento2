@@ -9,7 +9,8 @@
         <block class="Divido\DividoFinancing\Block\Product\View\Widget"
             name="product.view.divido"
             template="Divido_DividoFinancing::product/view/widget.phtml"
-            after="product.info.price">
+            after="product.info.price"
+            ifconfig='payment/divido_financing/product_page_display'>
         </block>
     </referenceContainer>
 </body>

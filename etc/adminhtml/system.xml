@@ -37,6 +37,10 @@
                 <field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
+                <field id="product_page_display" translate="label" type="select" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show product page widget</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="creation_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Create order on</label>
                     <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\DividoStatus</source_model>
@@ -58,7 +62,7 @@
                 </field>
 
                 <field id="cart_threshold" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Cart threshold</label>
+                    <label>Minimum Cart Amount</label>
                 </field>
 
                 <field id="product_selection" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
