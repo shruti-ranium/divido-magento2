@@ -483,7 +483,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $params = [
             'application'    => $applicationId,
                 ];
-                $this->logger->warning('Divido: Cancelling Application');                        
+        $this->logger->warning('Divido: Cancelling Application');                        
         \Divido::setMerchant($apiKey);
         \Divido_Cancellation::cancel($params);
         
