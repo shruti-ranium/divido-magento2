@@ -157,6 +157,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
+    public function getGrandTotal($quote)
+    {
+        if (!$quote) {
+            return false;
+        }
+
+        $totals = $quote->getTotals();
+        $grandTotal = $totals['grand_total']->getValue();
+
+        return $grandTotal;        
+    }
+
     public function getLocalPlans($productId)
     {
         $isActive = $this->config->getValue(
@@ -368,20 +380,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $apiKey;
     }
 
+    public function getDividoKey()
+    { 
+        $apiKey = $this->getApiKey();
+        
+            if (empty($apiKey)) {
+                return '';
+            }
+    
+            $keyParts = explode('.', $apiKey);
+            $relevantPart = array_shift($keyParts);
+    
+            $jsKey = strtolower($relevantPart);
+            
+            return $jsKey;
+    }
+
     public function getScriptUrl()
     {
-        $apiKey = $this->getApiKey();
-    
-        if (empty($apiKey)) {
-            return '';
-        }
-
-        $keyParts = explode('.', $apiKey);
-        $relevantPart = array_shift($keyParts);
-
-        $jsKey = strtolower($relevantPart);
-
-        return "//cdn.divido.com/calculator/{$jsKey}.js";
+        return "//cdn.divido.com/calculator/v2.1/production/js/template.divido.js";
     }
 
     public function plans2list($plans)
