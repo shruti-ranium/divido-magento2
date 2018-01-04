@@ -212,20 +212,40 @@ class CreditRequest implements CreditRequestInterface
             $this->logger->warning('Divido Inital Value: ' . $iv);
             }
 
-            if($grandTotal != $iv){
-                $this->logger->warning('Cancel Order - Cart value changed: ');
-                //Cancel the order here
-                $lookup->setData('canceled', 1);
-                $lookup->save();
-                
-                $appId=$lookup->getProposalId();
-                $this->helper->cancelApplication($appId);
-                $this->logger->warning('Cancel Order - Cart value changed: '.(string)$appId);
-                return $this->webhookResponse(false, 'Cart value changed');
-            }
-
             $orderId = $this->quoteManagement->placeOrder($quoteId);
             $order = $this->order->load($orderId);
+
+            if($grandTotal != $iv){
+                if ($debug) {
+                    $this->logger->warning('HOLD Order - Cart value changed: ');
+                }
+                //Highlight order for review
+                $lookup->setData('canceled', 1);
+                $lookup->save();
+                $appId = $lookup->getProposalId();
+                $order->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_HOLD, true);
+
+                if ($order->canHold()) {
+                    $order->hold();
+                    $order->addStatusHistoryComment('Value of cart changed before completion - order on hold');
+                    $state = Mage_Sales_Model_Order::STATE_HOLDED;
+                    $status = Mage_Sales_Model_Order::STATE_HOLDED;
+                    $comment = 'Value of cart changed before completion - Order on hold';
+                    $notify = false;
+                    $order->setHoldBeforeState($order->getState());
+                    $order->setHoldBeforeStatus($order->getStatus());
+                    $order->setState($state, $status, $comment, $notify);
+
+                }else{
+                    $this->logger->addDebug('Divido: Cannot Hold Order');
+                    $order->addStatusHistoryComment('Value of cart changed before completion - cannot hold order');
+
+                }
+                
+                if ($debug) {
+                    $this->logger->warning('HOLD Order - Cart value changed: '.(string)$appId);
+                }
+            }
         }
         
         $lookup->setData('order_id', $order->getId());

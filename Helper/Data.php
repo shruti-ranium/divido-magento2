@@ -476,17 +476,4 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $signature;
     }
 
-    public function cancelApplication($applicationId)
-    {
-        $this->logger->warning('Divido: Cancelling Application');        
-        $apiKey = $this->getApiKey();
-        $params = [
-            'application'    => $applicationId,
-                ];
-        $this->logger->warning('Divido: Cancelling Application');                        
-        \Divido::setMerchant($apiKey);
-        \Divido_Cancellation::cancel($params);
-        
-    }
-
 }
