@@ -54,7 +54,7 @@ define(
                 fullScreenLoader.startLoader();
 
                 var email   = $('#customer-email').val();
-                var planId  = $('select[name=divido_finance]').val();
+                var planId  = $('input[name=divido_plan]').val();
                 var deposit = $('input[name=divido_deposit]').val();
 
                 var setPayment = setPaymentMethodAction(this.messageContainer)
