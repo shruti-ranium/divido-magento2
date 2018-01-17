@@ -157,6 +157,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
+    public function getGrandTotal($quote)
+    {
+        if (!$quote) {
+            return false;
+        }
+
+        $totals = $quote->getTotals();
+        $grandTotal = $totals['grand_total']->getValue();
+
+        return $grandTotal;        
+    }
+
     public function getLocalPlans($productId)
     {
         $isActive = $this->config->getValue(
@@ -226,9 +238,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             \Divido::setSharedSecret($secret);
         }
 
-        $quote = $this->cart->getQuote();
-        $shipAddr = $quote->getShippingAddress();
-        $country = $shipAddr->getCountryId();
+        $quote       = $this->cart->getQuote();
+        $shipAddr    = $quote->getShippingAddress();
+        $country     = $shipAddr->getCountryId();
+        $billingAddr = $quote->getBillingAddress();
+        
+        //Transform Addresses to be compatible with our form
+        $shippingAddress = $this->getAddressDetail($shipAddr);
+        $billingAddress  = $this->getAddressDetail($billingAddr);
 
         if(empty($country)){
             $shipAddr = $quote->getBillingAddress();
@@ -252,15 +269,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $currency = $store->getCurrentCurrencyCode();
 
         $customer = [
-            'title'         => '',
-            'first_name'    => $shipAddr->getFirstName(),
-            'middle_name'   => $shipAddr->getMiddleName(),
-            'last_name'     => $shipAddr->getLastName(),
-            'country'       => $country,
-            'postcode'      => $shipAddr->getPostcode(),
-            'email'         => $email,
-            'mobile_number' => '',
-            'phone_number'  => $shipAddr->getTelephone(),
+            'title'             => '',
+            'first_name'        => $shipAddr->getFirstName(),
+            'middle_name'       => $shipAddr->getMiddleName(),
+            'last_name'         => $shipAddr->getLastName(),
+            'country'           => $country,
+            'postcode'          => $shipAddr->getPostcode(),
+            'email'             => $email,
+            'mobile_number'     => '',
+            'phone_number'      => $shipAddr->getTelephone(),
+            'shippingAddress'   => $shippingAddress,
+            'address'           => $billingAddress,
         ];
 
         $products = [];
@@ -364,20 +383,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $apiKey;
     }
 
+    public function getDividoKey()
+    { 
+        $apiKey = $this->getApiKey();
+        
+            if (empty($apiKey)) {
+                return '';
+            }
+    
+            $keyParts = explode('.', $apiKey);
+            $relevantPart = array_shift($keyParts);
+    
+            $jsKey = strtolower($relevantPart);
+            
+            return $jsKey;
+    }
+
     public function getScriptUrl()
     {
-        $apiKey = $this->getApiKey();
-    
-        if (empty($apiKey)) {
-            return '';
-        }
-
-        $keyParts = explode('.', $apiKey);
-        $relevantPart = array_shift($keyParts);
-
-        $jsKey = strtolower($relevantPart);
-
-        return "//cdn.divido.com/calculator/{$jsKey}.js";
+        return "//cdn.divido.com/calculator/v2.1/production/js/template.divido.js";
     }
 
     public function plans2list($plans)
@@ -474,6 +498,31 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $signature = base64_encode($hmac);
 
         return $signature;
+    }
+
+    /**
+     * Returns and array from magento address object 
+     * 
+     * Converts a magento array object into an array for use within our form
+     *
+     * @param object $addressObject
+     * @return array
+     */
+    public function getAddressDetail($addressObject)
+    {
+        $addressText     = implode(' ' , array($addressObject['street'],$addressObject['city'],$addressObject['postcode']));
+        $addressArray = array(
+            'postcode'          => $addressObject['postcode'],
+            'street'            => $addressObject['street'],
+            'flat'              => '',
+            'buildingNumber'    => '',
+            'buildingName'      => '',
+            'town'              => $addressObject['city'],
+            'flat'              => '',
+            'text'              => $addressText,            
+        );
+
+        return $addressArray;
     }
 
 }
