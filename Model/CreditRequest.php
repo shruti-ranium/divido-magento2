@@ -226,20 +226,25 @@ class CreditRequest implements CreditRequestInterface
                 $order->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_HOLD, true);
 
                 if ($order->canHold()) {
+                    error_log('Holding :');
                     $order->hold();
                     $order->addStatusHistoryComment('Value of cart changed before completion - order on hold');
-                    $state = Mage_Sales_Model_Order::STATE_HOLDED;
-                    $status = Mage_Sales_Model_Order::STATE_HOLDED;
+                    $state = \Magento\Sales\Model\Order::STATE_HOLDED;
+                    $status = \Magento\Sales\Model\Order::STATE_HOLDED;
                     $comment = 'Value of cart changed before completion - Order on hold';
                     $notify = false;
                     $order->setHoldBeforeState($order->getState());
                     $order->setHoldBeforeStatus($order->getStatus());
                     $order->setState($state, $status, $comment, $notify);
+                    $order->save();
+                    $lookup->setData('order_id', $order->getId());
+                    $lookup->save();
+                    return $this->webhookResponse();
 
                 }else{
                     $this->logger->addDebug('Divido: Cannot Hold Order');
                     $order->addStatusHistoryComment('Value of cart changed before completion - cannot hold order');
-
+   
                 }
                 
                 if ($debug) {
@@ -265,6 +270,7 @@ class CreditRequest implements CreditRequestInterface
                 $status = $status_override;
             }
             $order->setStatus($status);
+
         }
 
         $comment = 'Divido: ' . $data->status;
