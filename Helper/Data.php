@@ -343,6 +343,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'response_url' => $response_url,
             'redirect_url' => $redirect_url,
             'checkout_url' => $checkout_url,
+            'initial_cart_value' => $grandTotal,
         ];
 
         $response = \Divido_CreditRequest::create($requestData);
@@ -355,6 +356,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $lookupModel->setData('salt', $salt);
             $lookupModel->setData('deposit_value', $deposit);
             $lookupModel->setData('proposal_id', $response->id);
+            $lookupModel->setData('initial_cart_value', $grandTotal);
+            
             $lookupModel->save();
 
             return $response->url;
@@ -426,6 +429,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'proposal_id'    => $lookupModel->getData('proposal_id'),
             'application_id' => $lookupModel->getData('application_id'),
             'deposit_amount' => $lookupModel->getData('deposit_value'),
+            'initial_cart_value' => $lookupModel->getData('initial_cart_value'),
+            
         ];
     }
 

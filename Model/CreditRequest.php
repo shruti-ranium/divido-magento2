@@ -86,9 +86,10 @@ class CreditRequest implements CreditRequestInterface
         $planId  = $this->req->getQuery('plan', null);
         $deposit = $this->req->getQuery('deposit', null);
         $email   = $this->req->getQuery('email', null);
-
+        $cartValue   = $this->req->getQuery('initial_cart_value', null);
+        
         try {
-            $creditRequestUrl = $this->helper->creditRequest($planId, $deposit, $email);
+            $creditRequestUrl = $this->helper->creditRequest($planId, $deposit, $email, $cartValue);
             $response['url']  = $creditRequestUrl;
         } catch (\Exception $e) {
             $this->logger->addError($e);
@@ -113,12 +114,12 @@ class CreditRequest implements CreditRequestInterface
 
         $content = $this->req->getContent();
         if ($debug) {
-            $this->logger->addDebug('Divido: Request: ' . $content);
+            $this->logger->debug('Divido: Request: ' . $content);
         }
 
         $data = json_decode($content);
         if (is_null($data)) {
-            $this->logger->addError('Divido: Bad request, could not parse body: ' . $content);
+            $this->logger->error('Divido: Bad request, could not parse body: ' . $content);
             return $this->webhookResponse(false, 'Invalid json');
         }
 
@@ -126,7 +127,7 @@ class CreditRequest implements CreditRequestInterface
 
         $lookup = $this->lookupFactory->create()->load($quoteId, 'quote_id');
         if (! $lookup->getId()) {
-            $this->logger->addError('Divido: Bad request, could not find lookup. Req: ' . $content);
+            $this->logger->error('Divido: Bad request, could not find lookup. Req: ' . $content);
             return $this->webhookResponse(false, 'No lookup');
         }
 
@@ -185,14 +186,14 @@ class CreditRequest implements CreditRequestInterface
 
         if (! $order->getId() && $data->status != $creationStatus) {
             if ($debug) {
-                $this->logger->addDebug('Divido: No order, not creation status: ' . $data->status);
+                $this->logger->debug('Divido: No order, not creation status: ' . $data->status);
             }
             return $this->webhookResponse();
         }
-
+        
         if (! $order->getId() && $data->status == $creationStatus) {
             if ($debug) {
-                $this->logger->addDebug('Divido: Create order');
+                $this->logger->debug('Divido: Create order');
             }
 
             $quote = $this->quote->loadActive($quoteId);
@@ -201,8 +202,55 @@ class CreditRequest implements CreditRequestInterface
                 $quote->save();
             }
 
+            //If cart value is different do not place order
+            $totals = $quote->getTotals();    
+            $grandTotal = (string) $totals['grand_total']->getValue();
+            $iv=(string ) $lookup->getData('initial_cart_value');
+
+            if ($debug) {    
+            $this->logger->warning('Current Cart Value : ' . $grandTotal);
+            $this->logger->warning('Divido Inital Value: ' . $iv);
+            }
+
             $orderId = $this->quoteManagement->placeOrder($quoteId);
             $order = $this->order->load($orderId);
+
+            if($grandTotal != $iv){
+                if ($debug) {
+                    $this->logger->warning('HOLD Order - Cart value changed: ');
+                }
+                //Highlight order for review
+                $lookup->setData('canceled', 1);
+                $lookup->save();
+                $appId = $lookup->getProposalId();
+                $order->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_HOLD, true);
+
+                if ($order->canHold()) {
+                    error_log('Holding :');
+                    $order->hold();
+                    $order->addStatusHistoryComment('Value of cart changed before completion - order on hold');
+                    $state = \Magento\Sales\Model\Order::STATE_HOLDED;
+                    $status = \Magento\Sales\Model\Order::STATE_HOLDED;
+                    $comment = 'Value of cart changed before completion - Order on hold';
+                    $notify = false;
+                    $order->setHoldBeforeState($order->getState());
+                    $order->setHoldBeforeStatus($order->getStatus());
+                    $order->setState($state, $status, $comment, $notify);
+                    $order->save();
+                    $lookup->setData('order_id', $order->getId());
+                    $lookup->save();
+                    return $this->webhookResponse();
+
+                }else{
+                    $this->logger->addDebug('Divido: Cannot Hold Order');
+                    $order->addStatusHistoryComment('Value of cart changed before completion - cannot hold order');
+   
+                }
+                
+                if ($debug) {
+                    $this->logger->warning('HOLD Order - Cart value changed: '.(string)$appId);
+                }
+            }
         }
         
         $lookup->setData('order_id', $order->getId());
@@ -222,6 +270,7 @@ class CreditRequest implements CreditRequestInterface
                 $status = $status_override;
             }
             $order->setStatus($status);
+
         }
 
         $comment = 'Divido: ' . $data->status;
