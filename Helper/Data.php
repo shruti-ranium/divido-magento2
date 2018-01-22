@@ -166,7 +166,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $totals = $quote->getTotals();
         $grandTotal = $totals['grand_total']->getValue();
 
-        return $grandTotal;        
+        return $grandTotal;
     }
 
     public function getLocalPlans($productId)
@@ -205,12 +205,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
-        if (
-            !$display 
-            || $display == 'product_plans_default' 
-            || (empty($productPlans) 
-            && $globalProdSelection != 'products_selected')) 
-        {
+        if (!$display
+            || $display == 'product_plans_default'
+            || (empty($productPlans)
+            && $globalProdSelection != 'products_selected')) {
             return $this->getGlobalSelectedPlans();
         }
 
@@ -247,7 +245,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $shippingAddress = $this->getAddressDetail($shipAddr);
         $billingAddress  = $this->getAddressDetail($billingAddr);
 
-        if(empty($country)){
+        if (empty($country)) {
             $shipAddr = $quote->getBillingAddress();
             $country = $shipAddr->getCountry();
         }
@@ -384,12 +382,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function getDividoKey()
-    { 
+    {
         $apiKey = $this->getApiKey();
         
-            if (empty($apiKey)) {
-                return '';
-            }
+        if (empty($apiKey)) {
+            return '';
+        }
     
             $keyParts = explode('.', $apiKey);
             $relevantPart = array_shift($keyParts);
@@ -501,8 +499,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Returns and array from magento address object 
-     * 
+     * Returns and array from magento address object
+     *
      * Converts a magento array object into an array for use within our form
      *
      * @param object $addressObject
@@ -510,8 +508,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getAddressDetail($addressObject)
     {
-        $addressText     = implode(' ' , array($addressObject['street'],$addressObject['city'],$addressObject['postcode']));
-        $addressArray = array(
+        $addressText     = implode(' ', [$addressObject['street'],$addressObject['city'],$addressObject['postcode']]);
+        $addressArray = [
             'postcode'          => $addressObject['postcode'],
             'street'            => $addressObject['street'],
             'flat'              => '',
@@ -519,10 +517,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'buildingName'      => '',
             'town'              => $addressObject['city'],
             'flat'              => '',
-            'text'              => $addressText,            
-        );
+            'text'              => $addressText,
+        ];
 
         return $addressArray;
     }
-
 }
