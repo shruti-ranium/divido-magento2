@@ -118,7 +118,7 @@ class CreditRequest implements CreditRequestInterface
         }
 
         $data = json_decode($content);
-        if (is_null($data)) {
+        if ($data === null) {
             $this->logger->error('Divido: Bad request, could not parse body: ' . $content);
             return $this->webhookResponse(false, 'Invalid json');
         }
@@ -226,7 +226,9 @@ class CreditRequest implements CreditRequestInterface
                 $order->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_HOLD, true);
 
                 if ($order->canHold()) {
-                    error_log('Holding :');
+                    if ($debug) {
+                        $this->logger->warning('HOLDING:');
+                    }
                     $order->hold();
                     $order->addStatusHistoryComment('Value of cart changed before completion - order on hold');
                     $state = \Magento\Sales\Model\Order::STATE_HOLDED;
@@ -241,7 +243,9 @@ class CreditRequest implements CreditRequestInterface
                     $lookup->save();
                     return $this->webhookResponse();
                 } else {
-                    $this->logger->addDebug('Divido: Cannot Hold Order');
+                    if ($debug) {
+                        $this->logger->addDebug('Divido: Cannot Hold Order');
+                    };
                     $order->addStatusHistoryComment('Value of cart changed before completion - cannot hold order');
                 }
                 
