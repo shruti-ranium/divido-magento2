@@ -118,7 +118,7 @@ class CreditRequest implements CreditRequestInterface
         }
 
         $data = json_decode($content);
-        if (is_null($data)) {
+        if ($data === null) {
             $this->logger->error('Divido: Bad request, could not parse body: ' . $content);
             return $this->webhookResponse(false, 'Invalid json');
         }
@@ -203,19 +203,19 @@ class CreditRequest implements CreditRequestInterface
             }
 
             //If cart value is different do not place order
-            $totals = $quote->getTotals();    
+            $totals = $quote->getTotals();
             $grandTotal = (string) $totals['grand_total']->getValue();
             $iv=(string ) $lookup->getData('initial_cart_value');
 
-            if ($debug) {    
-            $this->logger->warning('Current Cart Value : ' . $grandTotal);
-            $this->logger->warning('Divido Inital Value: ' . $iv);
+            if ($debug) {
+                $this->logger->warning('Current Cart Value : ' . $grandTotal);
+                $this->logger->warning('Divido Inital Value: ' . $iv);
             }
 
             $orderId = $this->quoteManagement->placeOrder($quoteId);
             $order = $this->order->load($orderId);
 
-            if($grandTotal != $iv){
+            if ($grandTotal != $iv) {
                 if ($debug) {
                     $this->logger->warning('HOLD Order - Cart value changed: ');
                 }
@@ -226,7 +226,9 @@ class CreditRequest implements CreditRequestInterface
                 $order->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_HOLD, true);
 
                 if ($order->canHold()) {
-                    error_log('Holding :');
+                    if ($debug) {
+                        $this->logger->warning('HOLDING:');
+                    }
                     $order->hold();
                     $order->addStatusHistoryComment('Value of cart changed before completion - order on hold');
                     $state = \Magento\Sales\Model\Order::STATE_HOLDED;
@@ -240,11 +242,11 @@ class CreditRequest implements CreditRequestInterface
                     $lookup->setData('order_id', $order->getId());
                     $lookup->save();
                     return $this->webhookResponse();
-
-                }else{
-                    $this->logger->addDebug('Divido: Cannot Hold Order');
+                } else {
+                    if ($debug) {
+                        $this->logger->addDebug('Divido: Cannot Hold Order');
+                    };
                     $order->addStatusHistoryComment('Value of cart changed before completion - cannot hold order');
-   
                 }
                 
                 if ($debug) {
@@ -270,7 +272,6 @@ class CreditRequest implements CreditRequestInterface
                 $status = $status_override;
             }
             $order->setStatus($status);
-
         }
 
         $comment = 'Divido: ' . $data->status;
