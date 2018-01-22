@@ -225,13 +225,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function creditRequest($planId, $depositPercentage, $email)
     {
         $apiKey = $this->getApiKey();
-
         \Divido::setMerchant($apiKey);
 
         $secret = $this->config->getValue(
             'payment/divido_financing/secret',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
+    
         if ($secret) {
             \Divido::setSharedSecret($secret);
         }
@@ -240,11 +240,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $shipAddr    = $quote->getShippingAddress();
         $country     = $shipAddr->getCountryId();
         $billingAddr = $quote->getBillingAddress();
-        
         //Transform Addresses to be compatible with our form
         $shippingAddress = $this->getAddressDetail($shipAddr);
         $billingAddress  = $this->getAddressDetail($billingAddr);
-
+        
         if (empty($country)) {
             $shipAddr = $quote->getBillingAddress();
             $country = $shipAddr->getCountry();
@@ -262,10 +261,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $language = 'EN';
-
         $store = $this->storeManager->getStore();
         $currency = $store->getCurrentCurrencyCode();
-
         $customer = [
             'title'             => '',
             'first_name'        => $shipAddr->getFirstName(),
@@ -279,7 +276,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'shippingAddress'   => $shippingAddress,
             'address'           => $billingAddress,
         ];
-
         $products = [];
         foreach ($quote->getAllItems() as $item) {
             $products[] = [
@@ -289,11 +285,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'value'    => $item->getPriceInclTax(),
             ];
         }
-
         $totals = $quote->getTotals();
         $grandTotal = $totals['grand_total']->getValue();
         $deposit = round(($depositPercentage/100) * $grandTotal, 2);
-
         $shipping = $shipAddr->getShippingAmount();
         if (! empty($shipping)) {
             $products[] = [
@@ -303,7 +297,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'value'    => $shipping,
             ];
         }
-
         $discount = $shipAddr->getDiscountAmount();
         if (! empty($discount)) {
             $products[] = [
@@ -313,18 +306,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'value'    => $discount,
             ];
         }
-
         $quoteId   = $quote->getId();
         $salt      = uniqid('', true);
         $quoteHash = $this->hashQuote($salt, $quoteId);
-
         $response_url = $this->urlBuilder->getBaseUrl() . self::CALLBACK_PATH;
         $checkout_url = $this->urlBuilder->getUrl(self::CHECKOUT_PATH);
         $redirect_url = $this->urlBuilder->getUrl(
             self::REDIRECT_PATH,
             ['quote_id' => $quoteId]
         );
-
         $requestData = [
             'merchant' => $apiKey,
             'deposit'  => $deposit,
@@ -345,19 +335,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         $response = \Divido_CreditRequest::create($requestData);
-
         if ($response->status == 'ok') {
             $lookupModel = $this->lookupFactory->create();
             $lookupModel->load($quoteId, 'quote_id');
-
             $lookupModel->setData('quote_id', $quoteId);
             $lookupModel->setData('salt', $salt);
             $lookupModel->setData('deposit_value', $deposit);
             $lookupModel->setData('proposal_id', $response->id);
             $lookupModel->setData('initial_cart_value', $grandTotal);
-            
             $lookupModel->save();
-
             return $response->url;
         } else {
             if ($response->status === 'error') {
