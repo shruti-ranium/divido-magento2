@@ -6,8 +6,8 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 {
     const METHOD_CODE = 'divido_financing';
 
-    protected $_code = self::METHOD_CODE;
-    protected $_isOffline = true;
+    protected $code = self::METHOD_CODE;
+    protected $isOffline = true;
 
     private $dividoHelper;
 
