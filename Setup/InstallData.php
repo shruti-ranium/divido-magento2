@@ -16,7 +16,7 @@ class InstallData implements InstallDataInterface
         $this->eavSetupFactory = $eavSetupFactory;
     }
 
-    public function install(ModuleDataSetupInterface $setup)
+    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
 
