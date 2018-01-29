@@ -3,6 +3,7 @@
     "description": "Divido financing gateway",
     "type": "magento2-module",
     "version": "1.0.6",
+    
     "license": [
         "OSL-3.0"
     ],
