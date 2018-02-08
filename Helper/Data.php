@@ -347,7 +347,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             return $response->url;
         } else {
             if ($response->status === 'error') {
-                throw new \Magento\Framework\Exception\LocalizedException($response->error);
+                throw new \Magento\Framework\Exception\LocalizedException(__($response->error));
             }
         }
     }
