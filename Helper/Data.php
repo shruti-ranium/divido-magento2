@@ -263,6 +263,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $language = 'EN';
         $store = $this->storeManager->getStore();
         $currency = $store->getCurrentCurrencyCode();
+
         $customer = [
             'title'             => '',
             'first_name'        => $shipAddr->getFirstName(),
@@ -276,6 +277,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'shippingAddress'   => $shippingAddress,
             'address'           => $billingAddress,
         ];
+        $this->logger->addError(serialize($shipAddr));
+
+
         $products = [];
         foreach ($quote->getAllItems() as $item) {
             $products[] = [
@@ -333,7 +337,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'checkout_url' => $checkout_url,
             'initial_cart_value' => $grandTotal,
         ];
-
         $response = \Divido_CreditRequest::create($requestData);
         if ($response->status == 'ok') {
             $lookupModel = $this->lookupFactory->create();
@@ -413,8 +416,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'proposal_id'    => $lookupModel->getData('proposal_id'),
             'application_id' => $lookupModel->getData('application_id'),
             'deposit_amount' => $lookupModel->getData('deposit_value'),
-            'initial_cart_value' => $lookupModel->getData('initial_cart_value'),
-            
+            'initial_cart_value' => $lookupModel->getData('initial_cart_value'), 
         ];
     }
 
@@ -494,10 +496,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getAddressDetail($addressObject)
     {
-        $addressText     = implode(' ', [$addressObject['street'],$addressObject['city'],$addressObject['postcode']]);
+        $street = str_replace("\n"," ", $addressObject['street']);
+        $addressText     = implode(' ', [$street,$addressObject['city'],$addressObject['postcode']]);
         $addressArray = [
             'postcode'          => $addressObject['postcode'],
-            'street'            => $addressObject['street'],
+            'street'            => $street,
             'flat'              => '',
             'buildingNumber'    => '',
             'buildingName'      => '',
