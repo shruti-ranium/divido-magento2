@@ -32,13 +32,17 @@ final class ConfigProvider implements ConfigProviderInterface
         $quote = $this->cart->getQuote();
         $plans = $this->helper->getQuotePlans($quote);
         $plans = $this->helper->plans2list($plans);
+        $suggestedDepositAmount = $this->helper->getSuggestedDeposit($quote);
 
         return [
             'payment' => [
                 self::CODE => [
                     'cart_plans' => $plans,
+                    'suggested_deposit_amount' => $suggestedDepositAmount,
                 ]
             ]
         ];
     }
+
+
 }

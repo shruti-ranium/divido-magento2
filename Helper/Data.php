@@ -37,6 +37,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         LookupFactory $lookupFactory,
         UrlInterface $urlBuilder,
         ProductFactory $productFactory
+        
     ) {
     
         $this->config        = $scopeConfig;
@@ -388,7 +389,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getScriptUrl()
     {
-        return "//cdn.divido.com/calculator/v2.1/production/js/template.divido.js";
+        return "//cdn.divido.com/calculator/v2.1/develop/js/template.divido.js";
     }
 
     public function plans2list($plans)
@@ -511,4 +512,28 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         return $addressArray;
     }
+
+    public function getSuggestedDeposit($quote){
+
+        $display = null;
+        $grandTotal=$this->getGrandTotal($quote);
+        $displayPercentage = 0;
+
+        foreach ($quote->getAllItems() as $item) {
+        $product = $this->productFactory->create()->load($item->getProductId());
+        $dispAttr = $product->getResource()->getAttribute('bundle_code');
+
+        if($dispAttr){
+            $dispAttrCode = $dispAttr->getAttributeCode();
+            $bundleCode = $product->getData($dispAttrCode);
+            if($bundleCode !=''){
+                $display=$item->getPriceInclTax();
+                $displayPercentage=($item->getPriceInclTax()/$grandTotal)*100;
+                }
+            }
+        }
+
+        return ceil($displayPercentage);
+    }
+
 }
