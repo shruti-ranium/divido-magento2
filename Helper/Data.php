@@ -64,6 +64,26 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->cache->clean('matchingTag', [self::CACHE_DIVIDO_TAG]);
     }
 
+    public function getSuffix()
+    {
+        $suffix = $this->config->getValue(
+            'payment/divido_financing/widget_suffix',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    
+        return $suffix;
+    }
+
+    public function getPrefix()
+    {
+        
+        $prefix = $this->config->getValue(
+            'payment/divido_financing/widget_prefix',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        return $prefix;
+    }
+
     public function getAllPlans()
     {
         $apiKey = $this->config->getValue(
