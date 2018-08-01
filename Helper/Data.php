@@ -67,7 +67,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getSuffix()
     {
         $suffix = $this->config->getValue(
-            'payment/divido_financing/widget_suffix',
+            'payment/divido_financing/product_page_widget_suffix',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     
@@ -78,9 +78,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         
         $prefix = $this->config->getValue(
-            'payment/divido_financing/widget_prefix',
+            'payment/divido_financing/product_page_widget_prefix',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
+        
         return $prefix;
     }
 
