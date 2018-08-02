@@ -522,18 +522,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         foreach ($quote->getAllItems() as $item) {
         $product = $this->productFactory->create()->load($item->getProductId());
         $dispAttr = $product->getResource()->getAttribute('bundle_code');
-
         if($dispAttr){
             $dispAttrCode = $dispAttr->getAttributeCode();
             $bundleCode = $product->getData($dispAttrCode);
             if($bundleCode !=''){
                 $display=$item->getPriceInclTax();
                 $displayPercentage=($item->getPriceInclTax()/$grandTotal)*100;
+                $displayPercentage=ceil($displayPercentage);
                 }
             }
         }
-
-        return ceil($displayPercentage);
+        return $displayPercentage;
     }
 
 }
