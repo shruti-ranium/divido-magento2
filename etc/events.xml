@@ -3,4 +3,7 @@
     <event name="sales_order_save_after">
         <observer name="divido_dividofinancing_order_status_change" instance="Divido\DividoFinancing\Observer\FulfilmentObserver" />
     </event>  
+    <event name="sales_order_invoice_pay">
+        <observer name="divido_dividofinancing_invoice_status_change" instance="Divido\DividoFinancing\Observer\InvoicedObserver" />
+    </event>  
 </config>
