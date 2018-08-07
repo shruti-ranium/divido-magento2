@@ -293,6 +293,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $totals = $quote->getTotals();
         $grandTotal = $totals['grand_total']->getValue();
         $deposit = round(($depositPercentage/100) * $grandTotal, 2);
+        $minDeposit = getSuggestedDeposit($quote, true);
+        
+        if($deposit < $minDeposit){
+            $deposit = $minDeposit;
+            }
+            
         $shipping = $shipAddr->getShippingAmount();
         if (! empty($shipping)) {
             $products[] = [
@@ -513,7 +519,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $addressArray;
     }
 
-    public function getSuggestedDeposit($quote){
+    public function getSuggestedDeposit($quote, $displayAsNumber=null){
 
         $display = null;
         $grandTotal=$this->getGrandTotal($quote);
@@ -528,11 +534,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             if($bundleCode !=''){
                 $display=$item->getPriceInclTax();
                 $displayPercentage=($item->getPriceInclTax()/$grandTotal)*100;
-                $displayPercentage=ceil($displayPercentage);
+                $displayPercentage=number_format($displayPercentage,'2');
                 }
             }
         }
-        return $displayPercentage;
+        if(!$displayAsNumber){
+            return $displayPercentage;
+        }
+        return $display;
+
     }
 
     public function updateInvoiceStatus($order)
