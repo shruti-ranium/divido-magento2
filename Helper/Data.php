@@ -278,8 +278,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'shippingAddress'   => $shippingAddress,
             'address'           => $billingAddress,
         ];
-        $this->logger->addError(serialize($shipAddr));
-
 
         $products = [];
         foreach ($quote->getAllItems() as $item) {
