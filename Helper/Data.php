@@ -393,7 +393,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getScriptUrl()
     {
-        return "//cdn.divido.com/calculator/v2.1/develop/js/template.divido.js";
+        return "//cdn.divido.com/calculator/v2.1/production/js/template.divido.js";
     }
 
     public function plans2list($plans)
