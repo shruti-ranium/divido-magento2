@@ -504,12 +504,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $street = str_replace("\n"," ", $addressObject['street']);
         $addressText     = implode(' ', [$street,$addressObject['city'],$addressObject['postcode']]);
         $addressArray = [
-            'postcode'          => $addressObject['postcode'],
-            'street'            => $street,
+            'postcode'          => '',
+            'street'            => '',
             'flat'              => '',
             'buildingNumber'    => '',
             'buildingName'      => '',
-            'town'              => $addressObject['city'],
+            'town'              => '',
             'flat'              => '',
             'text'              => $addressText,
         ];
