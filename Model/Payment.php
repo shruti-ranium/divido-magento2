@@ -81,16 +81,24 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 
     public function canUseForCurrency($currencyCode)
     {
+        
         return $currencyCode === 'GBP';
     }
 
     public function canUseForCountry($country)
     {
+
         $parentOk = parent::canUseForCountry($country);
+
         if (! $parentOk) {
             return false;
         }
 
-        return $country === 'GB';
+        $allowedCountries = $this->_scopeConfig->getValue(
+            'payment/divido_financing/specificcountry',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+
+        return $country;
     }
 }

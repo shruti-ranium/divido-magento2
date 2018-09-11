@@ -51,7 +51,7 @@ class Widget extends \Magento\Catalog\Block\Product\AbstractProduct
             $ix = $this->helper->getSuffix();
         }
         if($ix !=''){
-            $output="data-divido-".$choice."='.$ix.'";
+            $output="data-divido-".$choice."='".$ix."'";
         }
         return $output;
     }

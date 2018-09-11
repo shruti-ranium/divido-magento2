@@ -230,7 +230,7 @@ class CreditRequest implements CreditRequestInterface
                         $this->logger->warning('HOLDING:');
                     }
                     $order->hold();
-                    $order->addStatusHistoryComment('Value of cart changed before completion - order on hold');
+                    $order->addStatusHistoryComment(__('Value of cart changed before completion - order on hold'));
                     $state = \Magento\Sales\Model\Order::STATE_HOLDED;
                     $status = \Magento\Sales\Model\Order::STATE_HOLDED;
                     $comment = 'Value of cart changed before completion - Order on hold';
@@ -246,7 +246,7 @@ class CreditRequest implements CreditRequestInterface
                     if ($debug) {
                         $this->logger->addDebug('Divido: Cannot Hold Order');
                     };
-                    $order->addStatusHistoryComment('Value of cart changed before completion - cannot hold order');
+                    $order->addStatusHistoryComment(__('Value of cart changed before completion - cannot hold order'));
                 }
                 
                 if ($debug) {
