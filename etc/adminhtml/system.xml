@@ -37,10 +37,26 @@
                 <field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
-                <field id="product_page_display" translate="label" type="select" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="product_page_display" translate="label" type="select" sortOrder="42" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Show product page widget</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+
+                <field id="product_page_widget_prefix" translate="label" type="text" sortOrder="43" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Widget Prefix</label>
+                    <depends>
+                        <field id="product_page_display">1</field>
+                    </depends>
+                </field>
+
+                <field id="product_page_widget_suffix" translate="label" type="text" sortOrder="44" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Widget Suffix</label>
+                    <depends>
+                        <field id="product_page_display">1</field>
+                    </depends>
+                </field>
+
+
                 <field id="creation_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Create order on</label>
                     <source_model>Divido\DividoFinancing\Model\Adminhtml\Source\DividoStatus</source_model>

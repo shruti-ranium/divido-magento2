@@ -40,4 +40,20 @@ class Widget extends \Magento\Catalog\Block\Product\AbstractProduct
 
         return $priceIncVat;
     }
+       
+    public function getPreOrSuffix($choice)
+    {
+        $output = '';
+
+        if($choice=="prefix"){
+            $ix = $this->helper->getPrefix();
+        }else{
+            $ix = $this->helper->getSuffix();
+        }
+        if($ix !=''){
+            $output="data-divido-".$choice."='.$ix.'";
+        }
+        return $output;
+    }
+
 }
