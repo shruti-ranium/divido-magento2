@@ -16,11 +16,11 @@ class PlansDisplayed implements \Magento\Framework\Option\ArrayInterface
         return [
             [
                 'value' => 'plans_all',
-                'label' => 'Display all plans',
+                'label' => __('Display all plans'),
             ],
             [
                 'value' => 'plans_selected',
-                'label' => 'Only display selected plans',
+                'label' => __('Only display selected plans'),
             ],
         ];
     }
