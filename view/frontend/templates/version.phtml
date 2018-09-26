@@ -1,0 +1,15 @@
+<?php
+/**
+ * @var \Divido\DividoFinancing\Block\Display
+ */
+?>
+<div>
+    <h4><u>Debug</u></h4>
+    <ul>
+    <?php
+    foreach($block->getComposer() as $key=>$value){
+        echo("<li>$key: $value</li>");
+    }
+    ?>
+    </ul>
+</div>
