@@ -74,6 +74,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $suffix;
     }
 
+
     public function getPrefix()
     {
         
@@ -336,6 +337,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $quoteHash = $this->hashQuote($salt, $quoteId);
         $response_url = $this->urlBuilder->getBaseUrl() . self::CALLBACK_PATH;
         $checkout_url = $this->urlBuilder->getUrl(self::CHECKOUT_PATH);
+        
+        if (!empty( $this->getCustomCheckoutUrl()))
+        {
+            $checkout_url = $this->urlBuilder->getUrl($this->getCustomCheckoutUrl());
+        }
+        
         $redirect_url = $this->urlBuilder->getUrl(
             self::REDIRECT_PATH,
             ['quote_id' => $quoteId]
@@ -531,5 +538,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         return $addressArray;
+    }
+
+    public function getCustomCheckoutUrl()
+    {
+        $customUrl = $this->config->getValue(
+            'payment/divido_financing/custom_checkout_url',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        return $customUrl;
     }
 }
