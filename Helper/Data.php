@@ -303,13 +303,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         $products = [];
         foreach ($quote->getAllItems() as $item) {
-            $item_price = ($item->getParentItemId() == null) ? $item->getPriceInclTax() : null;
-            $products[] = [
-                'type'     => 'product',
-                'text'     => $item->getName(),
-                'quantity' => $item->getQty(),
-                'value'    => $item_price,
-            ];
+            if($item->getParentItemId() == null){
+                $products[] = [
+                    'type'     => 'product',
+                    'text'     => $item->getName(),
+                    'quantity' => $item->getQty(),
+                    'value'    => $item->getPriceInclTax(),
+                ];
+            }
         }
         $totals = $quote->getTotals();
         $grandTotal = $totals['grand_total']->getValue();
