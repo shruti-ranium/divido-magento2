@@ -1,7 +1,22 @@
 <?php /* @var $block \Divido\DividoFinancing\Block\Product\View\Extra */?>
 <?php if ($plans = $block->getProductPlans()): ?>
-  <div data-divido-widget data-divido-plans="<?php echo $plans; ?>" data-divido-amount="<?php echo $block->getAmount(); ?>" data-divido-mode="popup"
+  <div id="divido-widget" data-divido-widget data-divido-plans="<?php echo $plans; ?>" data-divido-amount="<?php echo $block->getAmount(); ?>" data-divido-mode="popup"
   <?php echo $block->getPreOrSuffix('suffix'); ?>
   <?php echo $block->getPreOrSuffix('prefix'); ?>
   ></div>
 <?php endif; ?>
+<script>
+require(['jquery'], function($){
+  var checkboxes = document.getElementsByClassName('checkbox');
+  for(var iteration = 0; iteration < checkboxes.length; iteration++){
+    var checkbox = checkboxes[iteration];
+    checkbox.addEventListener('change', function(){
+      setTimeout(updatePrice,200);
+    })
+  }
+  var updatePrice = function(){
+    let price = $("#product-price-2 .price").text().replace(/[^0-9.+]+/gi,'');
+    $("#divido-widget").attr('data-divido-amount', price);
+  }
+});
+</script>
