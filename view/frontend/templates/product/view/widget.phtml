@@ -1,22 +1,31 @@
 <?php /* @var $block \Divido\DividoFinancing\Block\Product\View\Extra */?>
-<?php if ($plans = $block->getProductPlans()): ?>
-  <div id="divido-widget" data-divido-widget data-divido-plans="<?php echo $plans; ?>" data-divido-amount="<?php echo $block->getAmount(); ?>" data-divido-mode="popup"
+<?php if($block->loadWidget()){ ?>
+  <div id='dividoWidget' 
+    data-divido-widget 
+    data-divido-plans="<?php echo $block->getProductPlans(); ?>"
+    data-divido-amount="10" 
+    data-divido-mode="popup"
   <?php echo $block->getPreOrSuffix('suffix'); ?>
   <?php echo $block->getPreOrSuffix('prefix'); ?>
   ></div>
-<?php endif; ?>
 <script>
 require(['jquery'], function($){
-  var checkboxes = document.getElementsByClassName('checkbox');
-  for(var iteration = 0; iteration < checkboxes.length; iteration++){
-    var checkbox = checkboxes[iteration];
-    checkbox.addEventListener('change', function(){
-      setTimeout(updatePrice,200);
+  var options = $(".product-options-wrapper input, .product-options-wrapper select");
+  for(var iteration = 0; iteration < options.length; iteration++){
+    var option = options[iteration];
+    option.addEventListener('change', function(){
+      setTimeout(updatePrice,50);
     })
   }
   var updatePrice = function(){
-    let price = $("#product-price-2 .price").text().replace(/[^0-9.+]+/gi,'');
-    $("#divido-widget").attr('data-divido-amount', price);
+    let threshold = <?php echo $block->getThreshold(); ?>;
+    let price = $("#product-price-<?php echo($block->getProductId()); ?> .price").text().replace(/[^0-9.+]+/gi,'');
+    if(price >= threshold){
+      document.getElementById("dividoWidget").setAttribute('data-divido-amount', price);
+      document.getElementById("dividoWidget").style.display = "block";
+    }else document.getElementById("dividoWidget").style.display = "none";
   }
+  updatePrice();
 });
 </script>
+<?php } ?>
