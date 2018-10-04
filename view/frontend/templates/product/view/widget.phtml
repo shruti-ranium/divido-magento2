@@ -18,12 +18,15 @@ require(['jquery'], function($){
     })
   }
   var updatePrice = function(){
+    $("._1I3cfca1j8sC76qiXwArRu").remove();
     let threshold = <?php echo $block->getThreshold(); ?>;
     let price = $("#product-price-<?php echo($block->getProductId()); ?> .price").text().replace(/[^0-9.+]+/gi,'');
     if(price >= threshold){
       document.getElementById("dividoWidget").setAttribute('data-divido-amount', price);
-      document.getElementById("dividoWidget").style.display = "block";
-    }else document.getElementById("dividoWidget").style.display = "none";
+      document.getElementById("dividoWidget").style.display = "";
+    }else{
+      document.getElementById("dividoWidget").style.display = "none";
+    }
   }
   updatePrice();
 });
