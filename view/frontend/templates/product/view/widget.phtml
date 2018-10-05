@@ -1,7 +1,9 @@
 <?php /* @var $block \Divido\DividoFinancing\Block\Product\View\Extra */?>
-<?php if ($plans = $block->getProductPlans()): ?>
-  <div data-divido-widget data-divido-plans="<?php echo $plans; ?>" data-divido-amount="<?php echo $block->getAmount(); ?>" data-divido-mode="popup"
+  <div id='dividoWidget' 
+    data-divido-widget 
+    data-divido-plans="<?php echo $block->getProductPlans(); ?>"
+    data-divido-amount="<?php echo $block->getAmount(); ?>" 
+    data-divido-mode="popup"
   <?php echo $block->getPreOrSuffix('suffix'); ?>
   <?php echo $block->getPreOrSuffix('prefix'); ?>
   ></div>
-<?php endif; ?>

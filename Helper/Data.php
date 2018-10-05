@@ -84,7 +84,36 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         
         return $prefix;
     }
+    
+    public function getProductSelection(){
+        $selection= $this->config->getValue(
+            'payment/divido_financing/product_selection',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        
+        return $selection;
+    }
 
+    public function getPriceThreshold()
+    {
+        $threshold = $this->config->getValue(
+            'payment/divido_financing/price_threshold',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        
+        return $threshold;
+    }
+
+    public function getActive()
+    {
+        $active = $this->config->getValue(
+            'payment/divido_financing/active',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        
+        return $active;
+    }
+    
     public function getAllPlans()
     {
         $apiKey = $this->config->getValue(
@@ -192,10 +221,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getLocalPlans($productId)
     {
-        $isActive = $this->config->getValue(
-            'payment/divido_financing/active',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        $isActive = $this->getActive();
         if (! $isActive) {
             return[];
         }
