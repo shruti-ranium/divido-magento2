@@ -3,7 +3,8 @@
   <div id='dividoWidget' 
     data-divido-widget 
     data-divido-plans="<?php echo $block->getProductPlans(); ?>"
-    data-divido-amount="10" 
+    data-divido-amount="<?php echo $block->getAmount(); ?>" 
+
     data-divido-mode="popup"
   <?php echo $block->getPreOrSuffix('suffix'); ?>
   <?php echo $block->getPreOrSuffix('prefix'); ?>

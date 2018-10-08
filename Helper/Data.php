@@ -106,13 +106,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getActive()
     {
-        $isActive = $this->config->getValue(
+        $active = $this->config->getValue(
             'payment/divido_financing/active',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
-        return $isActive;
+        
+        return $active;
     }
-
+    
     public function getAllPlans()
     {
         $apiKey = $this->config->getValue(
