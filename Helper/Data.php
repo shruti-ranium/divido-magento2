@@ -268,7 +268,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
-    public function creditRequest($planId, $depositPercentage, $email)
+    public function creditRequest($planId, $depositPercentage, $email, $quoteId=null)
     {
         $apiKey = $this->getApiKey();
         \Divido::setMerchant($apiKey);
@@ -283,6 +283,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $quote       = $this->cart->getQuote();
+        if ($quoteId != null) {
+            $this->_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $quote = $this->_objectManager->create('Magento\Quote\Model\Quote')->load($quoteId);
+        }
         $shipAddr    = $quote->getShippingAddress();
         $country     = $shipAddr->getCountryId();
         $billingAddr = $quote->getBillingAddress();
