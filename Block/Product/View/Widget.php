@@ -36,7 +36,12 @@ class Widget extends \Magento\Catalog\Block\Product\AbstractProduct
         return $plans;
     }
 
-    public function getAmount()
+    public function getProductId()
+    {
+        return $this->getProduct()->getId();
+    }
+
+    public function getProductAmount()
     {
         $product = $this->getProduct();
         $price = $product->getFinalPrice();
@@ -59,17 +64,20 @@ class Widget extends \Magento\Catalog\Block\Product\AbstractProduct
         }
         return $output;
     }
+
+    public function loadWidget(){
+        return $this->helper->getActive();
+    }
     
     public function showWidget(){
         $threshold = $this->getThreshold();
-        if($threshold === false || $threshold < $this->getAmount()){
+        if($threshold === false || $this->getAmount() < $threshold){
             return false;
         }else return true;
     }
     
     public function getThreshold(){
         $selection = $this->helper->getProductSelection();
-        return 12;
         
         switch($selection){
             case self::ALL_PRODUCTS:
