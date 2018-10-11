@@ -565,24 +565,24 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function updateInvoiceStatus($order)
     {
-              // Check if it's a divido order
-                $lookup = $this->getLookupForOrder($order);
-                if ($lookup === null) {
-                    error_log('Not divido order');
-                    return false;
-                }
-                 $invoiceStatus = $this->config->getValue(
-                    'payment/divido_financing/invoice_status',
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                );
-                 if (! $invoiceStatus) {
-                    return false;
-                }
-                 $currentStatus  = $order->getData('status');
-                $previousStatus = $order->getOrigData('status');
-                 $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
-                $order->setStatus($invoiceStatus);
-                $order->addStatusToHistory($order->getStatus(), 'ORDER  processed successfully with reference');
-                $order->save();
-     }
+      // Check if it's a divido order
+        $lookup = $this->getLookupForOrder($order);
+        if ($lookup === null) {
+            error_log('Not divido order');
+            return false;
+        }
+         $invoiceStatus = $this->config->getValue(
+             'payment/divido_financing/invoice_status',
+             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+         );
+        if (! $invoiceStatus) {
+            return false;
+        }
+        $currentStatus  = $order->getData('status');
+        $previousStatus = $order->getOrigData('status');
+        $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
+        $order->setStatus($invoiceStatus);
+        $order->addStatusToHistory($order->getStatus(), 'ORDER  processed successfully with reference');
+        $order->save();
+    }
 }
