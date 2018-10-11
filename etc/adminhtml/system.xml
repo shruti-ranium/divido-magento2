@@ -120,7 +120,12 @@
                         <field id="headless_support">1</field>
                     </depends>
                 </field>
-
+                <field id="custom_redirect_url" translate="label" type="text" sortOrder="203" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Custom Redirect Url</label>
+                    <depends>
+                        <field id="headless_support">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
     </system>
