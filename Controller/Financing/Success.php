@@ -22,10 +22,12 @@ class Success extends \Magento\Framework\App\Action\Action
     public function execute()
     {
 
-
         $quoteId = $this->getRequest()->getParam('quote_id');
         $order   = $this->order->loadByAttribute('quote_id', $quoteId);
-
+        if ($order == null) {
+            sleep(8);
+            $order   = $this->order->loadByAttribute('quote_id', $quoteId);
+        }
         $this->checkoutSession->setLastQuoteId($quoteId);
         $this->checkoutSession->setLastSuccessQuoteId($quoteId);
         $this->checkoutSession->setLastOrderId($order->getId());

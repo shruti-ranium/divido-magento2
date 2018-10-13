@@ -467,7 +467,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'proposal_id'    => $lookupModel->getData('proposal_id'),
             'application_id' => $lookupModel->getData('application_id'),
             'deposit_amount' => $lookupModel->getData('deposit_value'),
-            'initial_cart_value' => $lookupModel->getData('initial_cart_value'), 
+            'initial_cart_value' => $lookupModel->getData('initial_cart_value')
         ];
     }
 
