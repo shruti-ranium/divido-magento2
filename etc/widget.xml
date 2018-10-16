@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
-    <<widget class="Divido\DividoFinancing\Block\Widget\BlockWidget" id="divido_dividofinancing_staticwidget">
+    <widget class="Divido\DividoFinancing\Block\Widget\BlockWidget" id="divido_dividofinancing_staticwidget">
         <label>Divido Block Widget</label>
         <description>The block version of our widget, displaying a list of your plans that dynamically 
         updates based on the amount entered into the text box situated above it.</description>
