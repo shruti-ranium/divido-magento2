@@ -270,7 +270,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $plans;
     }
 
-    public function creditRequest($planId, $depositPercentage, $email, $quoteId=null)
+    public function creditRequest($planId, $depositPercentage, $email, $quoteId = null)
     {
         $apiKey = $this->getApiKey();
         \Divido::setMerchant($apiKey);
@@ -283,7 +283,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if ($secret) {
             \Divido::setSharedSecret($secret);
         }
-
+       
         $quote       = $this->cart->getQuote();
         if ($quoteId != null) {
             $this->_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -481,7 +481,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             'proposal_id'    => $lookupModel->getData('proposal_id'),
             'application_id' => $lookupModel->getData('application_id'),
             'deposit_amount' => $lookupModel->getData('deposit_value'),
-            'initial_cart_value' => $lookupModel->getData('initial_cart_value'), 
+            'initial_cart_value' => $lookupModel->getData('initial_cart_value')
         ];
     }
 
@@ -596,4 +596,26 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
 
+    public function updateInvoiceStatus($order)
+    {
+      // Check if it's a divido order
+        $lookup = $this->getLookupForOrder($order);
+        if ($lookup === null) {
+            error_log('Not divido order');
+            return false;
+        }
+         $invoiceStatus = $this->config->getValue(
+             'payment/divido_financing/invoice_status',
+             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+         );
+        if (! $invoiceStatus) {
+            return false;
+        }
+        $currentStatus  = $order->getData('status');
+        $previousStatus = $order->getOrigData('status');
+        $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
+        $order->setStatus($invoiceStatus);
+        $order->addStatusToHistory($order->getStatus(), 'ORDER  processed successfully with reference');
+        $order->save();
+    }
 }
