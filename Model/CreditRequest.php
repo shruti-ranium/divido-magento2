@@ -46,6 +46,7 @@ class CreditRequest implements CreditRequestInterface
     private $quoteManagement;
     private $resourceInterface;
     private $resultJsonFactory;
+    private $eventManager;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -57,7 +58,8 @@ class CreditRequest implements CreditRequestInterface
         \Magento\Framework\Module\ResourceInterface $resourceInterface,
         \Divido\DividoFinancing\Helper\Data $helper,
         \Divido\DividoFinancing\Model\LookupFactory $lookupFactory,
-        \Psr\Log\LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Event\Manager $eventManager
     ) {
         $this->req    = $request;
         $this->quote = $quote;
@@ -69,6 +71,7 @@ class CreditRequest implements CreditRequestInterface
         $this->quoteManagement = $quoteManagement;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->resourceInterface = $resourceInterface;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -178,6 +181,10 @@ class CreditRequest implements CreditRequestInterface
             }
 
             return $this->webhookResponse();
+        }
+
+        if ($data->status == self::STATUS_REFERRED) {
+            $this->eventManager->dispatch('divido_financing_quote_referred', ['quote_id' => $quoteId]);
         }
 
         $creationStatus = $this->config->getValue(
