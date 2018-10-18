@@ -132,7 +132,6 @@ class CreditRequest implements CreditRequestInterface
         $lookup = $this->lookupFactory->create()->load($quoteId, 'quote_id');
         if (! $lookup->getId()) {
             $this->logger->error('Divido: Bad request, could not find lookup. Req: ' . $content);
-            $this->eventManager->dispatch('divido_financing_bad_request', ['quote_id' => $quoteId]);
             return $this->webhookResponse(false, 'No lookup');
         }
 
