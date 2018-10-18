@@ -185,7 +185,7 @@ class CreditRequest implements CreditRequestInterface
         }
 
         if ($data->status == self::STATUS_REFERRED) {
-            $this->eventManager->dispatch('divido_financing_order_referred', ['quote_id' => $quoteId]);
+            $this->eventManager->dispatch('divido_financing_quote_referred', ['quote_id' => $quoteId]);
         }
 
         $creationStatus = $this->config->getValue(
