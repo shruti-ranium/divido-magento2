@@ -184,6 +184,10 @@ class CreditRequest implements CreditRequestInterface
         }
 
         if ($data->status == self::STATUS_REFERRED) {
+            //Setting field referred
+            $lookup->setData('referred', 1);
+            $lookup->save();
+
             $this->eventManager->dispatch('divido_financing_quote_referred', ['quote_id' => $quoteId]);
         }
 
@@ -192,14 +196,14 @@ class CreditRequest implements CreditRequestInterface
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
-        if (! $order->getId() && $data->status != $creationStatus) {
+        if (! $order->getId() && $data->status != $creationStatus && $data->status != self::STATUS_REFERRED) {
             if ($debug) {
                 $this->logger->debug('Divido: No order, not creation status: ' . $data->status);
             }
             return $this->webhookResponse();
         }
         
-        if (! $order->getId() && $data->status == $creationStatus) {
+        if (! $order->getId() && ($data->status == $creationStatus || $data->status == self::STATUS_REFERRED)) {
             if ($debug) {
                 $this->logger->debug('Divido: Create order');
             }
@@ -281,6 +285,10 @@ class CreditRequest implements CreditRequestInterface
             }
             $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, true);
             $order->setStatus($status);
+
+            //Send Email only when order is signed by customer.
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $objectManager->create('Magento\Sales\Model\OrderNotifier')->notify($order);
         }
 
         $comment = 'Divido: ' . $data->status;

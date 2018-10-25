@@ -381,7 +381,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
         if (!empty($this->getCustomRedirectUrl()))
         {
-            $redirect_url = $this->urlBuilder->getUrl($this->getCustomRedirectUrl(), ['quote_id' => $quoteId]);
+            $redirect_url = $this->getCustomRedirectUrl().'/quote_id/'.$quoteId;
         }
 
         $requestData = [
