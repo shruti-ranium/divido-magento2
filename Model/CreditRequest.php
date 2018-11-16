@@ -220,8 +220,8 @@ class CreditRequest implements CreditRequestInterface
             $iv=(string ) $lookup->getData('initial_cart_value');
 
             if ($debug) {
-                $this->logger->warning('Current Cart Value : ' . $grandTotal);
-                $this->logger->warning('Divido Inital Value: ' . $iv);
+                $this->logger->debug('Current Cart Value : ' . $grandTotal);
+                $this->logger->debug('Divido Inital Value: ' . $iv);
             }
 
             $orderId = $this->quoteManagement->placeOrder($quoteId);
