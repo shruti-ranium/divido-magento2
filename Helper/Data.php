@@ -601,7 +601,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
       // Check if it's a divido order
         $lookup = $this->getLookupForOrder($order);
         if ($lookup === null) {
-            error_log('Not divido order');
             return false;
         }
          $invoiceStatus = $this->config->getValue(
