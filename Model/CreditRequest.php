@@ -196,14 +196,24 @@ class CreditRequest implements CreditRequestInterface
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
-        if (! $order->getId() && $data->status != $creationStatus && $data->status != self::STATUS_REFERRED) {
+        //Check if Divido order already exists (as with same quoteID, other orders with different payment method may be present with status as cancelled)
+        
+        //Divido order not exists
+        $isOrderExists = false;
+
+        //Divido Order already exists
+        if ($order->getId() && $order->getPayment()->getMethodInstance()->getCode() == 'divido_financing') {
+            $isOrderExists = true;
+        }
+
+        if (! $isOrderExists && $data->status != $creationStatus && $data->status != self::STATUS_REFERRED) {
             if ($debug) {
                 $this->logger->debug('Divido: No order, not creation status: ' . $data->status);
             }
             return $this->webhookResponse();
         }
         
-        if (! $order->getId() && ($data->status == $creationStatus || $data->status == self::STATUS_REFERRED)) {
+        if (! $isOrderExists && ($data->status == $creationStatus || $data->status == self::STATUS_REFERRED)) {
             if ($debug) {
                 $this->logger->debug('Divido: Create order');
             }
