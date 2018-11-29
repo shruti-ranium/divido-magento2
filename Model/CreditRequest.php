@@ -300,11 +300,10 @@ class CreditRequest implements CreditRequestInterface
             }
         }
         
-        if (!empty($order) && $order->getId()) {
-            $lookup->setData('order_id', $order->getId());
-            $lookup->save();
-        }
         
+        $lookup->setData('order_id', $order->getId());
+        $lookup->save();
+                
 
         if ($data->status == self::STATUS_SIGNED) {
             if ($debug) {
